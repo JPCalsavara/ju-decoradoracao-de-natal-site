@@ -51,7 +51,7 @@ const HeroSection = () => {
       <div className="container mx-auto grid lg:grid-cols-2 gap-8 items-center px-6 py-24 lg:py-0">
         {/* Lado Esquerdo: Conteúdo de Texto e CTA */}
         <motion.div
-          className="flex flex-col justify-center text-left"
+          className="flex flex-col justify-center text-center md:text-left"
           variants={textContainerVariants}
           initial="hidden"
           animate="visible"
