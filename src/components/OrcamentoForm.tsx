@@ -192,7 +192,7 @@ export function OrcamentoForm({
   // Tela de Sucesso (sem alterações)
   if (isSuccess) {
     return (
-      <div className="fixed inset-0 bg-black/70 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/70 z-z-[10002] flex items-center justify-center">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
