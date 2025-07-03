@@ -139,3 +139,5 @@ export function CredibilitySection() {
     </section>
   );
 }
+
+// Ficou num tamanho exquisito
