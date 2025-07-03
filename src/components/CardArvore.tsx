@@ -61,7 +61,7 @@ const CardArvore = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onExpand} // Clicar no fundo também fecha o modal.
-        className="fixed inset-0 bg-black/70 z-40"
+        className="fixed inset-0 bg-black/70 z-z-[10001]"
       />
 
       {/* Contêiner que centraliza o card expandido */}
