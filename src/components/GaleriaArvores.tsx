@@ -2,43 +2,47 @@
 "use client";
 
 import { useState } from "react";
-import CardArvore from "./CardArvore";
-import { ArvoresData, Arvore } from "../services/arvoresData";
 import { AnimatePresence } from "framer-motion";
-import { OrcamentoForm } from "./OrcamentoForm"; // 1. Importe o novo formulário
 
-const GaleriaArvores = () => {
-  const arvores = ArvoresData;
+// Importando os componentes e dados necessários
+import CardArvore from "./CardArvore";
+import { OrcamentoForm } from "./OrcamentoForm";
+import { ArvoresData, Arvore } from "../services/arvoresData";
+
+export function GaleriaArvores() {
+  // Mostra apenas as 4 primeiras árvores como uma prévia
+  const arvoresPreview = ArvoresData.slice(0, 4);
+
   const [selectedTree, setSelectedTree] = useState<Arvore | null>(null);
-  // 2. NOVO ESTADO para controlar a abertura do formulário
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // 3. Funções para controlar os estados de forma clara
-  const handleSelectTree = (arvore: Arvore) => {
-    setSelectedTree(arvore);
-  };
-  const handleCloseTree = () => {
-    setSelectedTree(null);
-  };
-  const handleOpenForm = () => {
-    setIsFormOpen(true);
-  };
+  // Funções para controlar os modais (sem alterações na lógica)
+  const handleSelectTree = (arvore: Arvore) => setSelectedTree(arvore);
+  const handleCloseTree = () => setSelectedTree(null);
+  const handleOpenForm = () => setIsFormOpen(true);
   const handleCloseForm = () => {
     setIsFormOpen(false);
-    setSelectedTree(null); // Fecha tudo de uma vez
+    setSelectedTree(null);
   };
 
   return (
-    <div
+    <section
       id="arvores"
       className="w-full h-auto flex flex-col items-center scroll-m-24 bg-slate-50 px-4 py-16 md:px-10"
     >
-      <h1 className="text-5xl md:text-6xl font-bold pb-10 text-slate-800 text-center">
-        Inspire-se em Nossas Criações
-      </h1>
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
+          Inspire-se em Nossas Criações
+        </h2>
+        <p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
+          Explore alguns dos nossos estilos favoritos. Cada decoração é pensada
+          para criar uma atmosfera única e mágica.
+        </p>
+      </div>
 
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {arvores.map((arvore) => (
+      {/* Grid com a prévia dos Cards */}
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {arvoresPreview.map((arvore) => (
           <CardArvore
             key={arvore.id}
             arvore={arvore}
@@ -47,7 +51,7 @@ const GaleriaArvores = () => {
         ))}
       </div>
 
-      {/* Camada 1: Modal de Expansão do Card */}
+      {/* Lógica dos Modais (sem alterações) */}
       <AnimatePresence>
         {selectedTree && (
           <CardArvore
@@ -55,19 +59,15 @@ const GaleriaArvores = () => {
             key={selectedTree.id}
             arvore={selectedTree}
             onExpand={handleCloseTree}
-            onOpenForm={handleOpenForm} // 4. Prop para abrir o formulário
+            onOpenForm={handleOpenForm}
           />
         )}
       </AnimatePresence>
-
-      {/* Camada 2: Modal do Formulário */}
       <AnimatePresence>
         {isFormOpen && selectedTree && (
           <OrcamentoForm arvore={selectedTree} onClose={handleCloseForm} />
         )}
       </AnimatePresence>
-    </div>
+    </section>
   );
-};
-
-export default GaleriaArvores;
+}
