@@ -1,16 +1,18 @@
+import { AboutSection } from "@/components/AboutSection";
 import { CredibilitySection } from "@/components/CredibilitySection";
-import GaleriaArvores from "@/components/GaleriaArvores";
+import { GaleriaArvores } from "@/components/GaleriaArvores";
+import GaleriaButton from "@/components/GaleriaButton";
 import HeroSection from "@/components/HeroSection";
-import NavBar from "@/components/NavBar";
 
 export default function Home() {
   return (
     <>
       <div className="w-screen h-min-screen">
-        <NavBar />
         <HeroSection></HeroSection>
         <CredibilitySection></CredibilitySection>
         <GaleriaArvores></GaleriaArvores>
+        <GaleriaButton></GaleriaButton>
+        <AboutSection></AboutSection>
       </div>
     </>
   );
