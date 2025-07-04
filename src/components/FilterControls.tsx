@@ -1,9 +1,5 @@
-// ==================================================================
-// ARQUIVO: src/components/FilterControls.tsx
-// Este componente lida apenas com a exibição e interação dos filtros.
-// ==================================================================
+// src/components/FilterControls.tsx
 "use client";
-
 import React from "react";
 
 const FilterControls = ({
@@ -15,7 +11,6 @@ const FilterControls = ({
   selectedColors: string[];
   onFilterChange: (color: string) => void;
 }) => {
-  // Mapeamento para aplicar cores do Tailwind aos checkboxes
   const colorMap: { [key: string]: string } = {
     Vermelho: "red",
     Azul: "blue",
