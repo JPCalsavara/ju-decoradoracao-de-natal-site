@@ -3,21 +3,9 @@
 
 import { useState, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Arvore } from "@/services/arvoresData";
 
-// Supondo que a interface Arvore esteja em um arquivo separado
-// import { Arvore } from '../services/arvoresData';
-export interface Arvore {
-  id: number;
-  nome: string;
-  estilo: string;
-  descricao: string;
-  imagemUrl: string;
-  altura: string;
-  cores: string[];
-  enfeites: string[];
-}
-
-// --- 1. Componente Auxiliar para o Seletor de Cores (COM HOVER) ---
+// --- Componente Auxiliar para o Seletor de Cores ---
 const ColorCheckboxSelector = ({
   title,
   selectedColors,
@@ -28,8 +16,6 @@ const ColorCheckboxSelector = ({
   onColorChange: (colors: string[]) => void;
 }) => {
   const PREDEFINED_COLORS = ["Vermelho", "Azul", "Dourado", "Branco", "Rosa"];
-
-  // Mapeamento de nomes de cores para classes do Tailwind
   const colorMap: { [key: string]: string } = {
     Vermelho: "red",
     Azul: "blue",
@@ -52,7 +38,7 @@ const ColorCheckboxSelector = ({
       <label className="font-medium text-slate-700">{title}</label>
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
         {PREDEFINED_COLORS.map((color) => {
-          const tailwindColor = colorMap[color];
+          const tailwindColor = colorMap[color] || "gray";
           return (
             <label
               key={color}
@@ -63,7 +49,6 @@ const ColorCheckboxSelector = ({
                 value={color}
                 checked={selectedColors.includes(color)}
                 onChange={() => handleCheckboxChange(color)}
-                // Aplica a cor de destaque ao checkbox
                 className={`mr-2 h-4 w-4 accent-${tailwindColor}-600 border-gray-300 rounded focus:ring-${tailwindColor}-500`}
               />
               <span className={`text-slate-700`}>{color}</span>
@@ -75,7 +60,7 @@ const ColorCheckboxSelector = ({
   );
 };
 
-// --- 2. Componente Auxiliar para o Seletor de Altura (sem alterações) ---
+// --- Componente Auxiliar para o Seletor de Altura ---
 const SizeSelector = ({
   selectedSize,
   onSizeChange,
@@ -93,7 +78,6 @@ const SizeSelector = ({
     "240cm",
     "270cm",
   ];
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -120,7 +104,7 @@ const SizeSelector = ({
   );
 };
 
-// --- 3. Componente Principal do Formulário (Atualizado) ---
+// --- Componente Principal do Formulário ---
 export function OrcamentoForm({
   arvore,
   onClose,
@@ -128,7 +112,7 @@ export function OrcamentoForm({
   arvore: Arvore;
   onClose: () => void;
 }) {
-  // --- Estados do formulário (sem alterações na lógica) ---
+  // --- Estados do formulário ---
   const [nome, setNome] = useState("");
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
@@ -139,7 +123,7 @@ export function OrcamentoForm({
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Função de envio (sem alterações na lógica)
+  // --- Lógica de envio (sem alterações) ---
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
@@ -189,10 +173,10 @@ export function OrcamentoForm({
     }
   };
 
-  // Tela de Sucesso (sem alterações)
+  // --- Tela de Sucesso ---
   if (isSuccess) {
     return (
-      <div className="fixed inset-0 bg-black/70 z-z-[10002] flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/80 z-[10002] flex items-center justify-center">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -208,16 +192,16 @@ export function OrcamentoForm({
     );
   }
 
-  // --- Renderização do formulário ATUALIZADA ---
+  // --- Renderização do Formulário ---
   return (
-    <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4">
+    // O z-index aqui é maior que o do CardArvore para garantir que ele fique por cima
+    <div className="fixed inset-0 bg-black/60 z-[10002] flex items-center justify-center p-4">
       <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 50, opacity: 0 }}
         className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
       >
-        {/* --- NOVO: Botão de Fechar --- */}
         <motion.button
           onClick={onClose}
           aria-label="Fechar Formulário"
@@ -260,7 +244,6 @@ export function OrcamentoForm({
             onChange={(e) => setNome(e.target.value)}
             className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
           />
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
               type="text"
@@ -279,7 +262,6 @@ export function OrcamentoForm({
               className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
             />
           </div>
-
           <div>
             <label className="font-medium text-slate-700">
               Você já tem a árvore?
@@ -309,7 +291,6 @@ export function OrcamentoForm({
               </label>
             </div>
           </div>
-
           <AnimatePresence>
             {temArvore === "sim" && (
               <SizeSelector
@@ -318,19 +299,16 @@ export function OrcamentoForm({
               />
             )}
           </AnimatePresence>
-
           <ColorCheckboxSelector
-            title="Cores desejadas para as bolas (pode marcar várias)"
+            title="Cores desejadas para as bolas"
             selectedColors={coresBolas}
             onColorChange={setCoresBolas}
           />
-
           <ColorCheckboxSelector
-            title="Cores desejadas para os laços (pode marcar várias)"
+            title="Cores desejadas para os laços"
             selectedColors={coresLacos}
             onColorChange={setCoresLacos}
           />
-
           <button
             type="submit"
             disabled={isLoading}

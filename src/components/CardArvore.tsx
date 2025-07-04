@@ -1,38 +1,28 @@
-// src/components/CardArvore.tsx
-"use client";
-
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { Arvore } from "../services/arvoresData";
-
-// --- Interface de Propriedades ---
-// Define tudo que o componente precisa receber para funcionar.
-interface CardArvoreProps {
-  arvore: Arvore;
-  onExpand: () => void; // Função chamada para ABRIR ou FECHAR o modal do card.
-  isExpanded?: boolean; // Controla se o card está no modo galeria ou expandido.
-  onOpenForm?: () => void; // Função chamada para ABRIR o formulário de orçamento.
-}
+import Image from "next/image";
+import { Arvore } from "@/services/arvoresData"; // Supondo que a interface Arvore venha daqui
 
 const CardArvore = ({
   arvore,
   onExpand,
   isExpanded = false,
   onOpenForm,
-}: CardArvoreProps) => {
-  // Desestruturando as propriedades da árvore para facilitar o uso.
-  const { id, nome, estilo, imagemUrl, altura, cores, enfeites, descricao } =
+}: {
+  arvore: Arvore;
+  onExpand: () => void;
+  isExpanded?: boolean;
+  onOpenForm?: () => void;
+}) => {
+  const { id, nome, estilo, imagemUrl, descricao, altura, cores, enfeites } =
     arvore;
 
-  // ==================================================================
-  // --- 1. VISÃO DO CARD PEQUENO (NA GALERIA) ---
-  // ==================================================================
+  // Versão do card na galeria
   if (!isExpanded) {
     return (
       <motion.div
-        layoutId={`card-arvore-${id}`} // ID que conecta este card à sua versão expandida.
+        layoutId={`card-arvore-${id}`}
         onClick={onExpand}
-        className="h-full bg-white rounded-lg overflow-hidden shadow-md cursor-pointer group flex flex-col"
+        className="w-full h-full bg-white rounded-lg overflow-hidden shadow-md cursor-pointer group flex flex-col"
       >
         <div className="relative w-full h-80">
           <Image
@@ -50,28 +40,21 @@ const CardArvore = ({
     );
   }
 
-  // ==================================================================
-  // --- 2. VISÃO DO CARD EXPANDIDO (MODAL) ---
-  // ==================================================================
+  // Versão do card expandido (modal)
   return (
     <>
-      {/* Overlay escuro que cobre o fundo da página */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={onExpand} // Clicar no fundo também fecha o modal.
-        className="fixed inset-0 bg-black/70 z-z-[10001]"
+        onClick={onExpand}
+        className="fixed inset-0 bg-black/70 z-[10000]"
       />
-
-      {/* Contêiner que centraliza o card expandido */}
-      <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-        {/* O card em si, que anima a partir da sua posição original */}
+      <div className="fixed inset-0 flex items-center justify-center z-[10001] p-4">
         <motion.div
           layoutId={`card-arvore-${id}`}
           className="relative w-full max-w-3xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
         >
-          {/* --- NOVO: Botão de Fechar (X) --- */}
           <motion.button
             onClick={onExpand}
             aria-label="Fechar"
@@ -94,8 +77,6 @@ const CardArvore = ({
               ></path>
             </svg>
           </motion.button>
-
-          {/* Seção da Imagem */}
           <div className="relative w-full md:w-1/2 h-64 md:h-auto">
             <Image
               src={imagemUrl}
@@ -104,15 +85,10 @@ const CardArvore = ({
               className="object-cover"
             />
           </div>
-
-          {/* Seção do Conteúdo Detalhado */}
           <div className="w-full md:w-1/2 p-6 overflow-y-auto">
             <h2 className="text-3xl font-bold text-slate-800 pr-8">{nome}</h2>
             <p className="text-md text-emerald-700 mt-1 mb-4">{estilo}</p>
-
             <p className="text-slate-600 mb-6">{descricao}</p>
-
-            {/* Detalhes com Tags */}
             <div className="space-y-4">
               <div>
                 <h4 className="text-sm font-bold text-slate-500 uppercase mb-2">
@@ -155,8 +131,6 @@ const CardArvore = ({
                 </div>
               </div>
             </div>
-
-            {/* Botão para abrir o formulário */}
             <motion.button
               onClick={onOpenForm}
               className="w-full mt-8 bg-red-700 text-white font-bold py-3 rounded-lg text-lg shadow-lg hover:bg-red-800 transition-colors"
