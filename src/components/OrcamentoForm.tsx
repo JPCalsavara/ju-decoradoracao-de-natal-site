@@ -35,7 +35,7 @@ const ColorCheckboxSelector = ({
 
   return (
     <div>
-      <label className="font-medium text-slate-700">{title}</label>
+      <label className="font-medium text-slate-700 md:text-lg">{title}</label>
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
         {PREDEFINED_COLORS.map((color) => {
           const tailwindColor = colorMap[color] || "gray";
@@ -51,7 +51,7 @@ const ColorCheckboxSelector = ({
                 onChange={() => handleCheckboxChange(color)}
                 className={`mr-2 h-4 w-4 accent-${tailwindColor}-600 border-gray-300 rounded focus:ring-${tailwindColor}-500`}
               />
-              <span className={`text-slate-700`}>{color}</span>
+              <span className={`text-slate-700 md:text-lg`}>{color}</span>
             </label>
           );
         })}
@@ -84,7 +84,9 @@ const SizeSelector = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <label className="font-medium text-slate-700">Qual a altura dela?</label>
+      <label className="font-medium text-slate-700 md:text-lg">
+        Qual a altura dela?
+      </label>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-6 gap-y-2 mt-2">
         {SIZES.map((size) => (
           <label key={size} className="flex items-center cursor-pointer">
@@ -96,7 +98,7 @@ const SizeSelector = ({
               onChange={() => onSizeChange(size)}
               className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
             />
-            {size}
+            <span className="md:text-lg">{size}</span>
           </label>
         ))}
       </div>
@@ -112,7 +114,6 @@ export function OrcamentoForm({
   arvore: Arvore;
   onClose: () => void;
 }) {
-  // --- Estados do formulário ---
   const [nome, setNome] = useState("");
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
@@ -123,57 +124,49 @@ export function OrcamentoForm({
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // --- Lógica de envio (sem alterações) ---
-  const handleSubmit = async (e: FormEvent) => {
+  // --- LÓGICA DE ENVIO ATUALIZADA ---
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
     setIsLoading(true);
 
+    // 1. Formata os dados para a mensagem
     const finalCorBolas =
       coresBolas.length > 0 ? coresBolas.join(", ") : "A definir";
     const finalCorLacos =
       coresLacos.length > 0 ? coresLacos.join(", ") : "A definir";
+    const temArvoreTexto =
+      temArvore === "sim" ? `Sim, altura de ${tamanhoArvore}` : "Não";
 
-    const requestBody = {
-      client_name: nome,
-      client_email: "nao_informado@email.com",
-      items: [
-        { product_type: "Estilo de Referência", product_details: arvore.nome },
-        {
-          product_type: "Localização",
-          product_details: `${cidade}, ${estado}`,
-        },
-        {
-          product_type: "Cliente Possui Árvore?",
-          product_details:
-            temArvore === "sim" ? `Sim, tamanho: ${tamanhoArvore}` : "Não",
-        },
-        { product_type: "Cores para Bolas", product_details: finalCorBolas },
-        { product_type: "Cores para Laços", product_details: finalCorLacos },
-      ],
-    };
+    // 2. Constrói a mensagem para o WhatsApp
+    const message =
+      `Olá! Gostaria de solicitar um orçamento de decoração de Natal.\n\n` +
+      `*Nome:* ${nome}\n` +
+      `*Localização:* ${cidade}, ${estado}\n\n` +
+      `*Inspiração:* ${arvore.nome} (Estilo: ${arvore.estilo})\n` +
+      `*Já possui árvore?* ${temArvoreTexto}\n` +
+      `*Cores para Bolas:* ${finalCorBolas}\n` +
+      `*Cores para Laços:* ${finalCorLacos}\n\n` +
+      `Aguardo o contato!`;
 
-    try {
-      const response = await fetch("/api/quote-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-      if (!response.ok) throw new Error("Falha ao enviar a solicitação.");
-      const data = await response.json();
-      window.open(data.whatsappUrl, "_blank");
-      setIsSuccess(true);
-      setTimeout(() => onClose(), 3000);
-    } catch (error) {
-      console.error(error);
-      alert(
-        "Ocorreu um erro ao enviar seu pedido. Por favor, tente novamente."
-      );
-      setIsLoading(false);
-    }
+    // 3. Cria o link do WhatsApp
+    // IMPORTANTE: Substitua o número abaixo pelo seu número de WhatsApp com código do país
+    const whatsappNumber = "5515991240551";
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+      message
+    )}`;
+
+    // 4. Abre o WhatsApp e atualiza a UI
+    window.open(whatsappUrl, "_blank");
+    setIsSuccess(true);
+
+    // Fecha o modal após 3 segundos
+    setTimeout(() => {
+      onClose();
+      setIsLoading(false); // Reseta o estado de loading
+    }, 3000);
   };
 
-  // --- Tela de Sucesso ---
   if (isSuccess) {
     return (
       <div className="fixed inset-0 bg-black/80 z-[10002] flex items-center justify-center">
@@ -182,8 +175,10 @@ export function OrcamentoForm({
           animate={{ scale: 1, opacity: 1 }}
           className="bg-white p-10 rounded-lg text-center shadow-2xl"
         >
-          <h2 className="text-2xl font-bold text-emerald-700">Obrigado!</h2>
-          <p className="text-slate-600 mt-2">
+          <h2 className="text-2xl md:text-3xl font-bold text-emerald-700">
+            Obrigado!
+          </h2>
+          <p className="text-slate-600 mt-2 md:text-lg">
             Seu pedido foi enviado e já estamos te redirecionando para o
             WhatsApp.
           </p>
@@ -192,131 +187,143 @@ export function OrcamentoForm({
     );
   }
 
-  // --- Renderização do Formulário ---
   return (
-    // O z-index aqui é maior que o do CardArvore para garantir que ele fique por cima
     <div className="fixed inset-0 bg-black/60 z-[10002] flex items-center justify-center p-4">
       <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 50, opacity: 0 }}
-        className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="relative bg-white rounded-lg shadow-xl w-full max-w-lg md:max-w-2xl max-h-[90vh] flex flex-col"
       >
-        <motion.button
-          onClick={onClose}
-          aria-label="Fechar Formulário"
-          className="absolute top-3 right-3 z-10 w-8 h-8 bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
-          whileHover={{ scale: 1.1, rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        {/* Cabeçalho */}
+        <div className="p-6 flex-shrink-0">
+          <motion.button
+            onClick={onClose}
+            aria-label="Fechar Formulário"
+            className="absolute top-3 right-3 z-10 w-8 h-8 md:w-10 md:h-10 bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
+            whileHover={{ scale: 1.1, rotate: 90 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </motion.button>
-
-        <div className="pr-8">
-          <h2 className="text-2xl font-bold text-slate-800">
-            Pedido de Orçamento
-          </h2>
-          <p className="text-slate-600 mt-2">
-            Estilo de referência:{" "}
-            <strong className="text-emerald-700">{arvore.nome}</strong>.
-          </p>
+            <svg
+              className="w-5 h-5 md:w-6 md:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </motion.button>
+          <div className="pr-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-800">
+              Pedido de Orçamento
+            </h2>
+            <p className="text-slate-600 mt-2 md:text-lg">
+              Estilo de referência:{" "}
+              <strong className="text-emerald-700">{arvore.nome}</strong>.
+            </p>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-          <input
-            type="text"
-            placeholder="Seu nome completo"
-            required
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Corpo do Formulário com Rolagem */}
+        <div className="px-6 flex-grow overflow-y-auto">
+          <form
+            id="orcamento-form"
+            onSubmit={handleSubmit}
+            className="space-y-6"
+          >
             <input
               type="text"
-              placeholder="Sua Cidade"
+              placeholder="Seu nome completo"
               required
-              value={cidade}
-              onChange={(e) => setCidade(e.target.value)}
-              className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition md:text-lg"
             />
-            <input
-              type="text"
-              placeholder="Seu Estado"
-              required
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
-              className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
-            />
-          </div>
-          <div>
-            <label className="font-medium text-slate-700">
-              Você já tem a árvore?
-            </label>
-            <div className="flex gap-6 mt-2">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="temArvore"
-                  value="nao"
-                  checked={temArvore === "nao"}
-                  onChange={() => setTemArvore("nao")}
-                  className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
-                />{" "}
-                Não
-              </label>
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="temArvore"
-                  value="sim"
-                  checked={temArvore === "sim"}
-                  onChange={() => setTemArvore("sim")}
-                  className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
-                />{" "}
-                Sim
-              </label>
-            </div>
-          </div>
-          <AnimatePresence>
-            {temArvore === "sim" && (
-              <SizeSelector
-                selectedSize={tamanhoArvore}
-                onSizeChange={setTamanhoArvore}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                type="text"
+                placeholder="Sua Cidade"
+                required
+                value={cidade}
+                onChange={(e) => setCidade(e.target.value)}
+                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition md:text-lg"
               />
-            )}
-          </AnimatePresence>
-          <ColorCheckboxSelector
-            title="Cores desejadas para as bolas"
-            selectedColors={coresBolas}
-            onColorChange={setCoresBolas}
-          />
-          <ColorCheckboxSelector
-            title="Cores desejadas para os laços"
-            selectedColors={coresLacos}
-            onColorChange={setCoresLacos}
-          />
+              <input
+                type="text"
+                placeholder="Seu Estado"
+                required
+                value={estado}
+                onChange={(e) => setEstado(e.target.value)}
+                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition md:text-lg"
+              />
+            </div>
+            <div>
+              <label className="font-medium text-slate-700 md:text-lg">
+                Você já tem a árvore?
+              </label>
+              <div className="flex gap-6 mt-2">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="temArvore"
+                    value="nao"
+                    checked={temArvore === "nao"}
+                    onChange={() => setTemArvore("nao")}
+                    className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                  />
+                  <span className="md:text-lg">Não</span>
+                </label>
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="temArvore"
+                    value="sim"
+                    checked={temArvore === "sim"}
+                    onChange={() => setTemArvore("sim")}
+                    className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                  />
+                  <span className="md:text-lg">Sim</span>
+                </label>
+              </div>
+            </div>
+            <AnimatePresence>
+              {temArvore === "sim" && (
+                <SizeSelector
+                  selectedSize={tamanhoArvore}
+                  onSizeChange={setTamanhoArvore}
+                />
+              )}
+            </AnimatePresence>
+            <ColorCheckboxSelector
+              title="Cores desejadas para as bolas"
+              selectedColors={coresBolas}
+              onColorChange={setCoresBolas}
+            />
+            <ColorCheckboxSelector
+              title="Cores desejadas para os laços"
+              selectedColors={coresLacos}
+              onColorChange={setCoresLacos}
+            />
+          </form>
+        </div>
+
+        {/* Rodapé com Botão Fixo */}
+        <div className="p-6 mt-auto flex-shrink-0 border-t border-slate-200">
           <button
             type="submit"
+            form="orcamento-form"
             disabled={isLoading}
-            className="w-full bg-red-700 text-white font-bold py-3 rounded-lg text-lg hover:bg-red-800 transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed"
+            className="w-full bg-red-700 text-white font-bold py-3 rounded-lg text-lg md:text-xl hover:bg-red-800 transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed"
           >
             {isLoading ? "Enviando..." : "Enviar e Chamar no WhatsApp"}
           </button>
-        </form>
+        </div>
       </motion.div>
     </div>
   );
