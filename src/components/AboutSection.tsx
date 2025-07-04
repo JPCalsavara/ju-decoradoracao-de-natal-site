@@ -21,7 +21,7 @@ export function AboutSection() {
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
             <Image
-              src="/images/decoradora-perfil.jpg" // Coloque uma foto sua aqui
+              src="/images/hero.jpeg" // Coloque uma foto sua aqui
               alt="Foto profissional da decoradora de Natal"
               fill
               className="object-cover rounded-lg shadow-xl"
