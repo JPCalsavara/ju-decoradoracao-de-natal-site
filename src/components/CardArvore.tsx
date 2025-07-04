@@ -53,7 +53,7 @@ const CardArvore = ({
       <div className="fixed inset-0 flex items-center justify-center z-[10001] p-2 md:p-4">
         <motion.div
           layoutId={`card-arvore-${id}`}
-          className="relative w-full max-w-3xl md:max-w-5xl max-h-[90vh]  md:min-h-[85vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
+          className="relative w-full max-w-3xl md:max-w-5xl max-h-[90vh] md:min-h-[85vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
         >
           <motion.button
             onClick={onExpand}
@@ -85,7 +85,7 @@ const CardArvore = ({
               className="object-cover"
             />
           </div>
-          <div className="w-full md:w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
+          <div className="w-full md:w-1/2 py-4 px-2 md:p-6 overflow-y-auto flex flex-col justify-between">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-800 pr-8">
                 {nome}
