@@ -231,7 +231,7 @@ export function OrcamentoForm({
         </div>
 
         {/* Corpo do Formulário com Rolagem */}
-        <div className="px-2 flex-grow overflow-y-auto">
+        <div className="px-6 flex-grow overflow-y-auto">
           <form
             id="orcamento-form"
             onSubmit={handleSubmit}
