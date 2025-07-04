@@ -4,8 +4,9 @@
 import { useState, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Arvore } from "@/services/arvoresData";
+import { useOrcamentoForm } from "@/hooks/useOrcamentoForm";
 
-// --- Componente Auxiliar para o Seletor de Cores ---
+// --- Componentes Auxiliares (Reutilizados) ---
 const ColorCheckboxSelector = ({
   title,
   selectedColors,
@@ -25,42 +26,37 @@ const ColorCheckboxSelector = ({
   };
 
   const handleCheckboxChange = (color: string) => {
-    const newSelectedColors = [...selectedColors];
-    if (newSelectedColors.includes(color)) {
-      onColorChange(newSelectedColors.filter((c) => c !== color));
-    } else {
-      onColorChange([...newSelectedColors, color]);
-    }
+    onColorChange(
+      selectedColors.includes(color)
+        ? selectedColors.filter((c) => c !== color)
+        : [...selectedColors, color]
+    );
   };
 
   return (
     <div>
       <label className="font-medium text-slate-700 md:text-lg">{title}</label>
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
-        {PREDEFINED_COLORS.map((color) => {
-          const tailwindColor = colorMap[color] || "gray";
-          return (
-            <label
-              key={color}
-              className={`flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-${tailwindColor}-100`}
-            >
-              <input
-                type="checkbox"
-                value={color}
-                checked={selectedColors.includes(color)}
-                onChange={() => handleCheckboxChange(color)}
-                className={`mr-2 h-4 w-4 accent-${tailwindColor}-600 border-gray-300 rounded focus:ring-${tailwindColor}-500`}
-              />
-              <span className={`text-slate-700 md:text-lg`}>{color}</span>
-            </label>
-          );
-        })}
+        {PREDEFINED_COLORS.map((color) => (
+          <label
+            key={color}
+            className={`flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-${colorMap[color]}-100`}
+          >
+            <input
+              type="checkbox"
+              value={color}
+              checked={selectedColors.includes(color)}
+              onChange={() => handleCheckboxChange(color)}
+              className={`mr-2 h-4 w-4 accent-${colorMap[color]}-600 rounded`}
+            />
+            <span className="md:text-lg">{color}</span>
+          </label>
+        ))}
       </div>
     </div>
   );
 };
 
-// --- Componente Auxiliar para o Seletor de Altura ---
 const SizeSelector = ({
   selectedSize,
   onSizeChange,
@@ -96,13 +92,62 @@ const SizeSelector = ({
               value={size}
               checked={selectedSize === size}
               onChange={() => onSizeChange(size)}
-              className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+              className="mr-2 h-4 w-4 text-red-600"
             />
             <span className="md:text-lg">{size}</span>
           </label>
         ))}
       </div>
     </motion.div>
+  );
+};
+
+const StyleCheckboxSelector = ({
+  selectedStyles,
+  onStyleChange,
+}: {
+  selectedStyles: string[];
+  onStyleChange: (styles: string[]) => void;
+}) => {
+  const PREDEFINED_STYLES = [
+    "Clássico",
+    "Moderno",
+    "Rústico",
+    "Disney",
+    "Minimalista",
+  ];
+
+  const handleCheckboxChange = (style: string) => {
+    onStyleChange(
+      selectedStyles.includes(style)
+        ? selectedStyles.filter((s) => s !== style)
+        : [...selectedStyles, style]
+    );
+  };
+
+  return (
+    <div>
+      <label className="font-medium text-slate-700 md:text-lg">
+        Quais estilos de decoração você mais gosta?
+      </label>
+      <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
+        {PREDEFINED_STYLES.map((style) => (
+          <label
+            key={style}
+            className="flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-slate-100"
+          >
+            <input
+              type="checkbox"
+              value={style}
+              checked={selectedStyles.includes(style)}
+              onChange={() => handleCheckboxChange(style)}
+              className="mr-2 h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+            />
+            <span className="md:text-lg">{style}</span>
+          </label>
+        ))}
+      </div>
+    </div>
   );
 };
 
@@ -114,57 +159,35 @@ export function OrcamentoForm({
   arvore: Arvore;
   onClose: () => void;
 }) {
+  const { isLoading, isSuccess, handleSubmit } = useOrcamentoForm(onClose);
+
+  // --- Estados dos campos do formulário ---
   const [nome, setNome] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [temArvore, setTemArvore] = useState<"nao" | "sim">("nao");
   const [tamanhoArvore, setTamanhoArvore] = useState(arvore.altura || "180cm");
   const [coresBolas, setCoresBolas] = useState<string[]>(arvore.cores || []);
   const [coresLacos, setCoresLacos] = useState<string[]>(arvore.cores || []);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  // NOVO ESTADO: Pré-seleciona o estilo baseado no card
+  const [estilos, setEstilos] = useState<string[]>([arvore.estilo]);
 
-  // --- LÓGICA DE ENVIO ATUALIZADA ---
-  const handleSubmit = (e: FormEvent) => {
+  // Função que coleta os dados e os envia para o hook
+  const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (isLoading) return;
-    setIsLoading(true);
-
-    // 1. Formata os dados para a mensagem
-    const finalCorBolas =
-      coresBolas.length > 0 ? coresBolas.join(", ") : "A definir";
-    const finalCorLacos =
-      coresLacos.length > 0 ? coresLacos.join(", ") : "A definir";
-    const temArvoreTexto =
-      temArvore === "sim" ? `Sim, altura de ${tamanhoArvore}` : "Não";
-
-    // 2. Constrói a mensagem para o WhatsApp
-    const message =
-      `Olá! Gostaria de solicitar um orçamento de decoração de Natal.\n\n` +
-      `*Nome:* ${nome}\n` +
-      `*Localização:* ${cidade}, ${estado}\n\n` +
-      `*Inspiração:* ${arvore.nome} (Estilo: ${arvore.estilo})\n` +
-      `*Já possui árvore?* ${temArvoreTexto}\n` +
-      `*Cores para Bolas:* ${finalCorBolas}\n` +
-      `*Cores para Laços:* ${finalCorLacos}\n\n` +
-      `Aguardo o contato!`;
-
-    // 3. Cria o link do WhatsApp
-    // IMPORTANTE: Substitua o número abaixo pelo seu número de WhatsApp com código do país
-    const whatsappNumber = "5515991240551";
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-      message
-    )}`;
-
-    // 4. Abre o WhatsApp e atualiza a UI
-    window.open(whatsappUrl, "_blank");
-    setIsSuccess(true);
-
-    // Fecha o modal após 3 segundos
-    setTimeout(() => {
-      onClose();
-      setIsLoading(false); // Reseta o estado de loading
-    }, 3000);
+    handleSubmit({
+      nome,
+      dataNascimento,
+      cidade,
+      estado,
+      temArvore,
+      tamanhoArvore,
+      coresBolas,
+      coresLacos,
+      estilos, // Passa os estilos para o hook
+      arvore, // Passa a árvore de referência
+    });
   };
 
   if (isSuccess) {
@@ -179,7 +202,7 @@ export function OrcamentoForm({
             Obrigado!
           </h2>
           <p className="text-slate-600 mt-2 md:text-lg">
-            Seu pedido foi enviado e já estamos te redirecionando para o
+            O seu pedido foi registado. Estamos a redirecioná-lo para o
             WhatsApp.
           </p>
         </motion.div>
@@ -193,23 +216,22 @@ export function OrcamentoForm({
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 50, opacity: 0 }}
-        className="relative bg-white rounded-lg shadow-xl w-[90%] max-w-md md:max-w-2xl max-h-[90vh] flex flex-col"
+        className="relative bg-white rounded-lg shadow-xl w-full max-w-lg md:max-w-2xl max-h-[90vh] flex flex-col"
       >
         {/* Cabeçalho */}
         <div className="p-6 flex-shrink-0">
           <motion.button
             onClick={onClose}
             aria-label="Fechar Formulário"
-            className="absolute top-3 right-3 z-10 w-8 h-8 md:w-10 md:h-10 bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
+            className="absolute top-3 right-3 z-10 w-8 md:w-10 h-8 md:h-10 bg-red-700 rounded-full flex items-center justify-center text-white"
             whileHover={{ scale: 1.1, rotate: 90 }}
             whileTap={{ scale: 0.9 }}
           >
             <svg
-              className="w-5 h-5 md:w-6 md:h-6"
+              className="w-5 md:w-6 h-5 md:h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"
@@ -224,48 +246,63 @@ export function OrcamentoForm({
               Pedido de Orçamento
             </h2>
             <p className="text-slate-600 mt-2 md:text-lg">
-              Estilo de referência:{" "}
+              Inspiração:{" "}
               <strong className="text-emerald-700">{arvore.nome}</strong>.
             </p>
           </div>
         </div>
-
-        {/* Corpo do Formulário com Rolagem */}
+        {/* Corpo do Formulário */}
         <div className="px-6 flex-grow overflow-y-auto">
           <form
             id="orcamento-form"
-            onSubmit={handleSubmit}
+            onSubmit={handleFormSubmit}
             className="space-y-6"
           >
             <input
               type="text"
-              placeholder="Seu nome completo"
+              placeholder="O seu nome completo"
               required
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition md:text-lg"
+              className="w-full p-3 border rounded-lg md:text-lg"
             />
+            <div>
+              <label
+                htmlFor="dataNascimento"
+                className="block text-sm font-medium text-slate-700 mb-1 md:text-base"
+              >
+                Data de Nascimento
+              </label>
+              <input
+                type="date"
+                id="dataNascimento"
+                required
+                value={dataNascimento}
+                onChange={(e) => setDataNascimento(e.target.value)}
+                className="w-full p-3 border rounded-lg md:text-lg"
+              />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
                 type="text"
-                placeholder="Sua Cidade"
+                placeholder="A sua Cidade"
                 required
                 value={cidade}
                 onChange={(e) => setCidade(e.target.value)}
-                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition md:text-lg"
+                className="w-full p-3 border rounded-lg md:text-lg"
               />
               <input
                 type="text"
-                placeholder="Seu Estado"
+                placeholder="O seu Estado"
                 required
                 value={estado}
                 onChange={(e) => setEstado(e.target.value)}
-                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition md:text-lg"
+                className="w-full p-3 border rounded-lg md:text-lg"
               />
             </div>
             <div>
               <label className="font-medium text-slate-700 md:text-lg">
-                Você já tem a árvore?
+                Já tem a árvore?
               </label>
               <div className="flex gap-6 mt-2">
                 <label className="flex items-center cursor-pointer">
@@ -275,7 +312,7 @@ export function OrcamentoForm({
                     value="nao"
                     checked={temArvore === "nao"}
                     onChange={() => setTemArvore("nao")}
-                    className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                    className="mr-2 h-4 w-4 text-red-600"
                   />
                   <span className="md:text-lg">Não</span>
                 </label>
@@ -286,7 +323,7 @@ export function OrcamentoForm({
                     value="sim"
                     checked={temArvore === "sim"}
                     onChange={() => setTemArvore("sim")}
-                    className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300"
+                    className="mr-2 h-4 w-4 text-red-600"
                   />
                   <span className="md:text-lg">Sim</span>
                 </label>
@@ -300,6 +337,13 @@ export function OrcamentoForm({
                 />
               )}
             </AnimatePresence>
+
+            {/* NOVO CAMPO DE ESTILOS ADICIONADO AQUI */}
+            <StyleCheckboxSelector
+              selectedStyles={estilos}
+              onStyleChange={setEstilos}
+            />
+
             <ColorCheckboxSelector
               title="Cores desejadas para as bolas"
               selectedColors={coresBolas}
@@ -312,16 +356,15 @@ export function OrcamentoForm({
             />
           </form>
         </div>
-
         {/* Rodapé com Botão Fixo */}
         <div className="p-6 mt-auto flex-shrink-0 border-t border-slate-200">
           <button
             type="submit"
             form="orcamento-form"
             disabled={isLoading}
-            className="w-full bg-red-700 text-white font-bold py-3 rounded-lg text-lg md:text-xl hover:bg-red-800 transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed"
+            className="w-full bg-red-700 text-white font-bold py-3 rounded-lg text-lg md:text-xl hover:bg-red-800 disabled:bg-slate-400"
           >
-            {isLoading ? "Enviando..." : "Enviar e Chamar no WhatsApp"}
+            {isLoading ? "A enviar..." : "Enviar e Chamar no WhatsApp"}
           </button>
         </div>
       </motion.div>
