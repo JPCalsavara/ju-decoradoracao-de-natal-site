@@ -7,13 +7,11 @@ import HeroSection from "@/components/HeroSection";
 export default function Home() {
   return (
     <>
-      <div className="w-screen h-min-screen">
-        <HeroSection></HeroSection>
-        <CredibilitySection></CredibilitySection>
-        <GaleriaArvores></GaleriaArvores>
-        <GaleriaButton></GaleriaButton>
-        <AboutSection></AboutSection>
-      </div>
+      <HeroSection></HeroSection>
+      <CredibilitySection></CredibilitySection>
+      <GaleriaArvores></GaleriaArvores>
+      <GaleriaButton></GaleriaButton>
+      <AboutSection></AboutSection>
     </>
   );
 }
