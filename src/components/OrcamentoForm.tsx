@@ -193,7 +193,7 @@ export function OrcamentoForm({
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 50, opacity: 0 }}
-        className="relative bg-white rounded-lg shadow-xl w-full max-w-lg md:max-w-2xl max-h-[90vh] flex flex-col"
+        className="relative bg-white rounded-lg shadow-xl w-full max-w-md md:max-w-2xl max-h-[90vh] flex flex-col"
       >
         {/* Cabeçalho */}
         <div className="p-6 flex-shrink-0">

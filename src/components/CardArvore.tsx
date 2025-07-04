@@ -53,7 +53,7 @@ const CardArvore = ({
       <div className="fixed inset-0 flex items-center justify-center z-[10001] p-2 md:p-4">
         <motion.div
           layoutId={`card-arvore-${id}`}
-          className="relative w-full max-w-xl md:max-w-5xl max-h-[90vh] md:min-h-[85vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
+          className="relative w-full max-w-md md:max-w-5xl max-h-[90vh] md:min-h-[85vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
         >
           <motion.button
             onClick={onExpand}
