@@ -56,7 +56,7 @@ export default function RootLayout({
     // Idioma alterado para Português do Brasil
     <html lang="pt-BR">
       <body
-        className={`${inter.variable} font-sans bg-slate-50 text-slate-800 antialiased z-[10000]`}
+        className={`${inter.variable} font-sans bg-slate-50 text-slate-800 antialiased z-[10000] w-screen`}
       >
         {/* Componente NavBar renderizado em todas as páginas */}
         <NavBar />
