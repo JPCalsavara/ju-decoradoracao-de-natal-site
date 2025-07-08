@@ -22,7 +22,7 @@ const textItemVariants = {
     x: 0,
     opacity: 1,
     transition: {
-      duration: 0.5,
+      duration: 0.3,
       ease: "easeOut",
     },
   },
@@ -35,7 +35,7 @@ const imageVariants = {
     x: 0,
     opacity: 1,
     transition: {
-      duration: 0.5,
+      duration: 0.3,
       ease: "easeOut",
     },
   },
@@ -56,13 +56,6 @@ const HeroSection = () => {
           initial="hidden"
           animate="visible"
         >
-          <Image
-            className="w-60 h-60 items-end"
-            src="icon.svg"
-            alt="logo"
-            width={48}
-            height={48}
-          />
           <motion.h1
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 leading-tight"
             variants={textItemVariants}
@@ -81,7 +74,7 @@ const HeroSection = () => {
           </motion.p>
 
           <motion.div className="mt-8" variants={textItemVariants}>
-            <Link href="#arvores" passHref>
+            <Link href="#arvores" passHref className="">
               <motion.button
                 className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 transition-colors duration-300"
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -101,7 +94,7 @@ const HeroSection = () => {
           animate="visible"
         >
           <Image
-            src="/images/arvores/dourada-branca.jpeg" // Idealmente uma imagem com fundo transparente (.png)
+            src="icon.svg" // Idealmente uma imagem com fundo transparente (.png)
             alt="Árvore de Natal decorada com detalhes em vermelho e dourado"
             fill
             className="object-contain" // 'object-contain' funciona bem para imagens sem fundo
