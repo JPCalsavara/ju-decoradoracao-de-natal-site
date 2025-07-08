@@ -14,7 +14,7 @@ export function AboutSection() {
         <div className="grid lg:grid-cols-5 gap-12 items-center">
           {/* Coluna da Imagem (ocupa 2 das 5 colunas no desktop) */}
           <motion.div
-            className="lg:col-span-2 w-full h-80 lg:h-[450px] relative"
+            className="lg:col-span-2 w-full h-140 lg:h-[450px] relative"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
@@ -37,7 +37,7 @@ export function AboutSection() {
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
-              Prazer, sou <span className="text-red-700">Ana Clara</span>, a
+              Prazer, sou <span className="text-red-700">Juliane</span>, a
               artesã por trás da sua decoração.
             </h2>
 
@@ -50,7 +50,7 @@ export function AboutSection() {
                 não apenas decoram, mas contam histórias e criam memórias.
               </p>
               <p>
-                Com mais de 8 anos de experiência, meu trabalho é uma fusão de
+                Com mais de 32 anos de experiência, meu trabalho é uma fusão de
                 técnica e sensibilidade. Eu acredito que cada lar tem uma
                 essência única, e minha missão é traduzir essa essência em uma
                 decoração de Natal que seja um reflexo autêntico dos seus sonhos
