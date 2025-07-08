@@ -37,24 +37,21 @@ export function AboutSection() {
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
-              Prazer, sou <span className="text-red-700">Juliane</span>, a
-              artesã por trás da sua decoração.
+              Quem é a <span className="text-red-700">Jú</span>, a artesã de
+              natal?
             </h2>
 
             <div className="mt-6 space-y-4 text-lg text-slate-600">
               <p>
-                Desde criança, o Natal sempre foi a minha época favorita do ano.
-                A casa cheia, as luzes piscando e, claro, a árvore como o
-                coração de toda a celebração. Essa paixão de infância cresceu e
-                se transformou na minha profissão: criar cenários natalinos que
-                não apenas decoram, mas contam histórias e criam memórias.
+                Meu nome é Juliane Calsavara, sou mãe, empresaria, cristã e
+                amante do Natal. Formada em Admnistração pela UNIMEP e dona da
+                Arcó-Iris por 23 anos, loja de brinquedos, papelaria e natal.
               </p>
               <p>
-                Com mais de 32 anos de experiência, meu trabalho é uma fusão de
-                técnica e sensibilidade. Eu acredito que cada lar tem uma
-                essência única, e minha missão é traduzir essa essência em uma
-                decoração de Natal que seja um reflexo autêntico dos seus sonhos
-                e tradições.
+                Desde pequena sempre amou o natal, mas foi trabalhando como
+                vendedora de roupas que começou a fazer os primeiros laços e
+                vendendo que surgiu a loja Arcó-Iris e sua primeria montagem que
+                nunca parou desde então.
               </p>
             </div>
 
