@@ -292,131 +292,136 @@ export function ContactSection() {
               </div>
             </a>
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="bg-slate-50 p-8 rounded-lg shadow-md"
           >
-            {isSuccess ? (
-              <div className="text-center py-10">
-                <h3 className="text-2xl font-bold text-emerald-700">
-                  Obrigado!
-                </h3>
-                <p className="text-slate-600 mt-2">
-                  A sua mensagem foi enviada. Estamos a redirecioná-lo para o
-                  WhatsApp.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-6">
-                <input
-                  type="text"
-                  placeholder="O seu nome completo"
-                  required
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  className="w-full p-3 border rounded-lg"
-                />
-                <div>
-                  <label
-                    htmlFor="dataNascimento"
-                    className="block text-sm font-medium text-slate-700 mb-1"
-                  >
-                    Data de Nascimento
-                  </label>
-                  <input
-                    type="date"
-                    id="dataNascimento"
-                    required
-                    value={dataNascimento}
-                    onChange={(e) => setDataNascimento(e.target.value)}
-                    className="w-full p-3 border rounded-lg"
-                  />
+            <h3 className="text-2xl font-bold text-slate-700">
+              Formulário Árvore dos Sonhos
+            </h3>
+            <div className="bg-slate-50 p-8 rounded-lg shadow-md">
+              {isSuccess ? (
+                <div className="text-center py-10">
+                  <h3 className="text-2xl font-bold text-emerald-700">
+                    Obrigado!
+                  </h3>
+                  <p className="text-slate-600 mt-2">
+                    A sua mensagem foi enviada. Estamos a redirecioná-lo para o
+                    WhatsApp.
+                  </p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              ) : (
+                <form onSubmit={handleFormSubmit} className="space-y-6">
                   <input
                     type="text"
-                    placeholder="A sua Cidade"
+                    placeholder="O seu nome completo"
                     required
-                    value={cidade}
-                    onChange={(e) => setCidade(e.target.value)}
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
                     className="w-full p-3 border rounded-lg"
                   />
-                  <input
-                    type="text"
-                    placeholder="O seu Estado"
-                    required
-                    value={estado}
-                    onChange={(e) => setEstado(e.target.value)}
-                    className="w-full p-3 border rounded-lg"
-                  />
-                </div>
-                <div>
-                  <label className="font-medium text-slate-700">
-                    Já tem a árvore?
-                  </label>
-                  <div className="flex gap-6 mt-2">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="temArvoreContato"
-                        value="nao"
-                        checked={temArvore === "nao"}
-                        onChange={() => setTemArvore("nao")}
-                        className="mr-2 h-4 w-4 text-red-600"
-                      />{" "}
-                      Não
+                  <div>
+                    <label
+                      htmlFor="dataNascimento"
+                      className="block text-sm font-medium text-slate-700 mb-1"
+                    >
+                      Data de Nascimento
                     </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="temArvoreContato"
-                        value="sim"
-                        checked={temArvore === "sim"}
-                        onChange={() => setTemArvore("sim")}
-                        className="mr-2 h-4 w-4 text-red-600"
-                      />{" "}
-                      Sim
-                    </label>
-                  </div>
-                </div>
-                <AnimatePresence>
-                  {temArvore === "sim" && (
-                    <SizeSelector
-                      selectedSize={tamanhoArvore}
-                      onSizeChange={setTamanhoArvore}
+                    <input
+                      type="date"
+                      id="dataNascimento"
+                      required
+                      value={dataNascimento}
+                      onChange={(e) => setDataNascimento(e.target.value)}
+                      className="w-full p-3 border rounded-lg"
                     />
-                  )}
-                </AnimatePresence>
-                <StyleCheckboxSelector
-                  selectedStyles={estilos}
-                  onStyleChange={setEstilos}
-                />
-                <ColorCheckboxSelector
-                  title="Cores desejadas para as bolas"
-                  selectedColors={coresBolas}
-                  onColorChange={setCoresBolas}
-                />
-                <ColorCheckboxSelector
-                  title="Cores desejadas para os laços"
-                  selectedColors={coresLacos}
-                  onColorChange={setCoresLacos}
-                />
-                <div className="flex flex-col items-start">
-                  <motion.button
-                    type="submit"
-                    disabled={isLoading}
-                    className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 disabled:bg-slate-400"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {isLoading ? "A enviar..." : "Enviar Pedido"}
-                  </motion.button>
-                </div>
-              </form>
-            )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="A sua Cidade"
+                      required
+                      value={cidade}
+                      onChange={(e) => setCidade(e.target.value)}
+                      className="w-full p-3 border rounded-lg"
+                    />
+                    <input
+                      type="text"
+                      placeholder="O seu Estado"
+                      required
+                      value={estado}
+                      onChange={(e) => setEstado(e.target.value)}
+                      className="w-full p-3 border rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-medium text-slate-700">
+                      Já tem a árvore?
+                    </label>
+                    <div className="flex gap-6 mt-2">
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="temArvoreContato"
+                          value="nao"
+                          checked={temArvore === "nao"}
+                          onChange={() => setTemArvore("nao")}
+                          className="mr-2 h-4 w-4 text-red-600"
+                        />{" "}
+                        Não
+                      </label>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="temArvoreContato"
+                          value="sim"
+                          checked={temArvore === "sim"}
+                          onChange={() => setTemArvore("sim")}
+                          className="mr-2 h-4 w-4 text-red-600"
+                        />{" "}
+                        Sim
+                      </label>
+                    </div>
+                  </div>
+                  <AnimatePresence>
+                    {temArvore === "sim" && (
+                      <SizeSelector
+                        selectedSize={tamanhoArvore}
+                        onSizeChange={setTamanhoArvore}
+                      />
+                    )}
+                  </AnimatePresence>
+                  <StyleCheckboxSelector
+                    selectedStyles={estilos}
+                    onStyleChange={setEstilos}
+                  />
+                  <ColorCheckboxSelector
+                    title="Cores desejadas para as bolas"
+                    selectedColors={coresBolas}
+                    onColorChange={setCoresBolas}
+                  />
+                  <ColorCheckboxSelector
+                    title="Cores desejadas para os laços"
+                    selectedColors={coresLacos}
+                    onColorChange={setCoresLacos}
+                  />
+                  <div className="flex flex-col items-start">
+                    <motion.button
+                      type="submit"
+                      disabled={isLoading}
+                      className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 disabled:bg-slate-400"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {isLoading ? "A enviar..." : "Enviar Pedido"}
+                    </motion.button>
+                  </div>
+                </form>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>
