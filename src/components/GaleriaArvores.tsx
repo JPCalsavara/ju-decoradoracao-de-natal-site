@@ -1,22 +1,26 @@
 // src/components/GaleriaArvores.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
-// Importando os componentes e dados necessários
+// 1. Importando o novo hook e os componentes necessários
+import { useProdutos } from "@/hooks/useProdutos";
 import CardArvore from "./CardArvore";
 import { OrcamentoForm } from "./OrcamentoForm";
-import { ArvoresData, Arvore } from "../services/arvoresData";
+import { Arvore } from "../services/arvoresData";
 
 export function GaleriaArvores() {
-  // Mostra apenas as 4 primeiras árvores como uma prévia
-  const arvoresPreview = ArvoresData.slice(0, 4);
+  // 2. Chamando o hook para buscar os dados do Supabase
+  const { produtos, loading, error } = useProdutos();
 
+  // Cria a lista de prévia apenas com os 4 primeiros produtos carregados
+  const arvoresPreview = useMemo(() => produtos.slice(0, 4), [produtos]);
+
+  // Lógica dos modais (sem alterações)
   const [selectedTree, setSelectedTree] = useState<Arvore | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-
-  // Funções para controlar os modais (sem alterações na lógica)
   const handleSelectTree = (arvore: Arvore) => setSelectedTree(arvore);
   const handleCloseTree = () => setSelectedTree(null);
   const handleOpenForm = () => setIsFormOpen(true);
@@ -40,16 +44,43 @@ export function GaleriaArvores() {
         </p>
       </div>
 
-      {/* Grid com a prévia dos Cards */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {arvoresPreview.map((arvore) => (
-          <CardArvore
-            key={arvore.id}
-            arvore={arvore}
-            onExpand={() => handleSelectTree(arvore)}
-          />
-        ))}
-      </div>
+      {/* 3. Renderização condicional baseada nos estados do hook */}
+      {loading && (
+        <div className="text-center py-10">
+          <p className="text-slate-600">A carregar inspirações...</p>
+        </div>
+      )}
+      {error && (
+        <div className="text-center py-10">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
+      {!loading && !error && (
+        <>
+          {/* Grid com a prévia dos Cards */}
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {arvoresPreview.map((arvore) => (
+              <CardArvore
+                key={arvore.id}
+                arvore={arvore}
+                onExpand={() => handleSelectTree(arvore)}
+              />
+            ))}
+          </div>
+
+          {/* Botão para a galeria completa */}
+          <div className="mt-12 text-center">
+            <Link
+              href="/galeria"
+              className="inline-block bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 
+               delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105
+               transition "
+            >
+              Ver Todas as Árvores
+            </Link>
+          </div>
+        </>
+      )}
 
       {/* Lógica dos Modais (sem alterações) */}
       <AnimatePresence>
