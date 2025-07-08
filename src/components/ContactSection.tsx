@@ -43,7 +43,7 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
-// --- Componentes Auxiliares do Formulário (Reutilizados) ---
+// --- Componentes Auxiliares do Formulário ---
 const ColorCheckboxSelector = ({
   title,
   selectedColors,
@@ -61,15 +61,12 @@ const ColorCheckboxSelector = ({
     Branco: "slate",
     Rosa: "pink",
   };
-
-  const handleCheckboxChange = (color: string) => {
+  const handleCheckboxChange = (color: string) =>
     onColorChange(
       selectedColors.includes(color)
         ? selectedColors.filter((c) => c !== color)
         : [...selectedColors, color]
     );
-  };
-
   return (
     <div>
       <label className="font-medium text-slate-700">{title}</label>
@@ -151,19 +148,16 @@ const StyleCheckboxSelector = ({
     "Disney",
     "Minimalista",
   ];
-
-  const handleCheckboxChange = (style: string) => {
+  const handleCheckboxChange = (style: string) =>
     onStyleChange(
       selectedStyles.includes(style)
         ? selectedStyles.filter((s) => s !== style)
         : [...selectedStyles, style]
     );
-  };
-
   return (
     <div>
       <label className="font-medium text-slate-700">
-        Quais estilos de decoração você mais gosta?
+        Quais estilos de decoração mais gosta?
       </label>
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
         {PREDEFINED_STYLES.map((style) => (
@@ -176,7 +170,7 @@ const StyleCheckboxSelector = ({
               value={style}
               checked={selectedStyles.includes(style)}
               onChange={() => handleCheckboxChange(style)}
-              className="mr-2 h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+              className="mr-2 h-4 w-4 text-red-600 rounded"
             />
             <span>{style}</span>
           </label>
@@ -188,7 +182,6 @@ const StyleCheckboxSelector = ({
 
 // --- Componente Principal da Seção "Contato" ---
 export function ContactSection() {
-  // Gerencia o estado dos campos do formulário
   const [nome, setNome] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [cidade, setCidade] = useState("");
@@ -199,7 +192,6 @@ export function ContactSection() {
   const [coresLacos, setCoresLacos] = useState<string[]>([]);
   const [estilos, setEstilos] = useState<string[]>([]);
 
-  // Função para limpar os campos após o envio
   const resetForm = () => {
     setNome("");
     setDataNascimento("");
@@ -211,10 +203,8 @@ export function ContactSection() {
     setEstilos([]);
   };
 
-  // Chama o hook para obter a lógica de envio
   const { isLoading, isSuccess, handleSubmit } = useOrcamentoForm(resetForm);
 
-  // Prepara os dados e chama o hook
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     handleSubmit({
@@ -239,11 +229,10 @@ export function ContactSection() {
           </h2>
           <p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
             Tem uma ideia em mente ou precisa de ajuda para começar? Preencha o
-            formulário abaixo ou entre em contato pelas nossas redes.
+            formulário abaixo ou entre em contacto pelas nossas redes.
           </p>
         </div>
         <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Coluna da Esquerda: Informações de Contato Direto */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -252,7 +241,7 @@ export function ContactSection() {
             className="space-y-6"
           >
             <h3 className="text-2xl font-bold text-slate-700">
-              Contato Direto
+              Contacto Direto
             </h3>
             <a
               href="https://wa.me/5515996690551"
@@ -271,7 +260,7 @@ export function ContactSection() {
               </div>
             </a>
             <a
-              href="https://instagram.com/ju_decoracao_de_natal/"
+              href="https://instagram.com/seu-perfil"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-4 group"
@@ -282,7 +271,7 @@ export function ContactSection() {
               <div>
                 <p className="font-bold text-slate-800 text-lg">Instagram</p>
                 <p className="text-slate-600 group-hover:text-pink-700 transition-colors duration-300">
-                  @ju_decoracao_de_natal
+                  @seu-perfil
                 </p>
               </div>
             </a>
@@ -303,8 +292,6 @@ export function ContactSection() {
               </div>
             </a>
           </motion.div>
-
-          {/* Coluna da Direita: Formulário de Orçamento */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -318,7 +305,7 @@ export function ContactSection() {
                   Obrigado!
                 </h3>
                 <p className="text-slate-600 mt-2">
-                  Sua mensagem foi enviada. Estamos te redirecionando para o
+                  A sua mensagem foi enviada. Estamos a redirecioná-lo para o
                   WhatsApp.
                 </p>
               </div>
@@ -326,7 +313,7 @@ export function ContactSection() {
               <form onSubmit={handleFormSubmit} className="space-y-6">
                 <input
                   type="text"
-                  placeholder="Seu nome completo"
+                  placeholder="O seu nome completo"
                   required
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
@@ -351,7 +338,7 @@ export function ContactSection() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <input
                     type="text"
-                    placeholder="Sua Cidade"
+                    placeholder="A sua Cidade"
                     required
                     value={cidade}
                     onChange={(e) => setCidade(e.target.value)}
@@ -359,7 +346,7 @@ export function ContactSection() {
                   />
                   <input
                     type="text"
-                    placeholder="Seu Estado"
+                    placeholder="O seu Estado"
                     required
                     value={estado}
                     onChange={(e) => setEstado(e.target.value)}
@@ -368,7 +355,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <label className="font-medium text-slate-700">
-                    Você já tem a árvore?
+                    Já tem a árvore?
                   </label>
                   <div className="flex gap-6 mt-2">
                     <label className="flex items-center cursor-pointer">
@@ -425,7 +412,7 @@ export function ContactSection() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {isLoading ? "Enviando..." : "Enviar Pedido"}
+                    {isLoading ? "A enviar..." : "Enviar Pedido"}
                   </motion.button>
                 </div>
               </form>
