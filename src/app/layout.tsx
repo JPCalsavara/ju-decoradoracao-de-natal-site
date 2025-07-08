@@ -15,8 +15,7 @@ const inter = Inter({
 
 // Metadados aprimorados para melhor SEO e compartilhamento social
 export const metadata: Metadata = {
-  title:
-    "Ju Decoração de Natal | Decoração Personalizada em Sorocaba, Campinas e SP",
+  title: "Ju Decoração de Natal",
   description:
     "Especialista em decoração de Natal com 32 anos de experiência. Transformamos seu lar ou empresa com projetos únicos em Sorocaba, Campinas e São Paulo.",
   keywords: [
@@ -54,7 +53,7 @@ export default function RootLayout({
 }>) {
   return (
     // Idioma alterado para Português do Brasil
-    <html lang="pt-BR">
+    <html lang="en">
       <body
         className={`${inter.variable} font-sans bg-slate-50 text-slate-800 antialiased z-[10000] w-screen`}
       >
