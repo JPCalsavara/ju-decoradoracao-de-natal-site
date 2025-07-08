@@ -51,6 +51,22 @@ const HeroSection = () => {
       <div className="container mx-auto grid lg:grid-cols-2 gap-8 items-center px-6 py-24 lg:py-0">
         {/* Lado Esquerdo: Conteúdo de Texto e CTA */}
         <motion.div
+          className="relative w-full h-80 md:h-[500px] lg:h-[600px]"
+          variants={imageVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <Image
+            src="icon.svg" // Idealmente uma imagem com fundo transparente (.png)
+            alt="Árvore de Natal decorada com detalhes em vermelho e dourado"
+            fill
+            className="object-contain" // 'object-contain' funciona bem para imagens sem fundo
+            priority
+          />
+        </motion.div>
+
+        {/* Lado Direito: Imagem de Destaque */}
+        <motion.div
           className="flex flex-col justify-center text-center md:text-left"
           variants={textContainerVariants}
           initial="hidden"
@@ -65,14 +81,6 @@ const HeroSection = () => {
             seu lar para o <span className="text-red-700">Natal.</span>
           </motion.h1>
 
-          <motion.p
-            className="mt-4 max-w-lg text-lg md:text-xl text-slate-600"
-            variants={textItemVariants}
-          >
-            Criamos decorações personalizadas que refletem seu estilo, trazendo
-            a verdadeira magia e aconchego para sua celebração.
-          </motion.p>
-
           <motion.div className="mt-8" variants={textItemVariants}>
             <Link href="#arvores" passHref className="">
               <motion.button
@@ -84,22 +92,6 @@ const HeroSection = () => {
               </motion.button>
             </Link>
           </motion.div>
-        </motion.div>
-
-        {/* Lado Direito: Imagem de Destaque */}
-        <motion.div
-          className="relative w-full h-80 md:h-[500px] lg:h-[600px]"
-          variants={imageVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <Image
-            src="icon.svg" // Idealmente uma imagem com fundo transparente (.png)
-            alt="Árvore de Natal decorada com detalhes em vermelho e dourado"
-            fill
-            className="object-contain" // 'object-contain' funciona bem para imagens sem fundo
-            priority
-          />
         </motion.div>
       </div>
     </section>
