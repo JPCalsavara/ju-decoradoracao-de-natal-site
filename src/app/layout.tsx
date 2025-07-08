@@ -8,6 +8,8 @@ import NavBar from "@/components/NavBar";
 import { ContactSection } from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 
+import { Analytics } from "@vercel/analytics/next";
+
 // Configuração da fonte Inter
 const inter = Inter({
   subsets: ["latin"],
@@ -67,6 +69,7 @@ export default function RootLayout({
         {/* Componente Footer renderizado em todas as páginas */}
         <ContactSection />
         <Footer></Footer>
+        <Analytics />
       </body>
     </html>
   );
