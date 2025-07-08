@@ -1,12 +1,11 @@
 // src/components/CredibilitySection.tsx
 "use client";
 
-import { animate } from "framer-motion"; // Alteração: 'animate' importado diretamente
+import { motion, animate } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
 
 // --- 1. Componente para um único item de estatística ---
-// Ele recebe um número e o anima de 0 até o valor final quando se torna visível.
 const StatItem = ({
   icon,
   finalValue,
@@ -18,15 +17,14 @@ const StatItem = ({
 }) => {
   const [count, setCount] = useState(0);
   const { ref, inView } = useInView({
-    triggerOnce: true, // A animação acontece apenas uma vez
-    threshold: 0.5, // Começa quando 50% do elemento está visível
+    triggerOnce: true,
+    threshold: 0.5,
   });
 
   useEffect(() => {
     if (inView) {
-      // Alteração: Usando a função 'animate' diretamente
       const controls = animate(0, finalValue, {
-        duration: 2, // Duração da animação em segundos
+        duration: 2,
         onUpdate(value) {
           setCount(Math.floor(value));
         },
@@ -39,13 +37,12 @@ const StatItem = ({
     <div ref={ref} className="flex flex-col items-center text-center">
       <div className="text-red-700 mb-2">{icon}</div>
       <p className="text-4xl md:text-5xl font-bold text-slate-800">+{count}</p>
-      <p className="text-sm md:text-base text-slate-600 mt-1">{label}</p>
+      <p className="text-md md:text-lg text-slate-600 mt-1">{label}</p>
     </div>
   );
 };
 
 // --- 2. Ícones para cada estatística ---
-// Usando SVG para ícones nítidos e leves.
 const CalendarIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +59,6 @@ const CalendarIcon = () => (
     />
   </svg>
 );
-
 const LocationIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +80,6 @@ const LocationIcon = () => (
     />
   </svg>
 );
-
 const TreeIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -105,20 +100,20 @@ const TreeIcon = () => (
 // --- 3. Componente Principal da Seção ---
 export function CredibilitySection() {
   return (
-    <section className="w-full bg-white py-20">
+    <section className="w-full md:h-[85vh] bg-white py-20">
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
+          <h2 className="text-4xl md:text-6xl font-bold text-slate-800">
             Experiência que Transforma
           </h2>
-          <p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
+          <p className="mt-3 max-w-2xl mx-auto text-xl text-slate-600">
             Nossa paixão pelo Natal se reflete em cada detalhe e em números que
             demonstram nossa dedicação.
           </p>
         </div>
 
         {/* Grid com as 3 estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 max-w-4xl mx-auto">
           <StatItem
             icon={<CalendarIcon />}
             finalValue={32}
@@ -135,9 +130,48 @@ export function CredibilitySection() {
             label="Árvores Montadas"
           />
         </div>
+
+        {/* --- SEÇÃO DE TEXTO ATUALIZADA --- */}
+        <motion.div
+          className="mt-20 max-w-[75%] mx-auto text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7 }}
+        >
+          <div className="flex flex-col md:flex-row md:justify-between md:flex-1/2 gap-8 text-xl text-slate-600">
+            <motion.div>
+              <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
+                O que me motiva?
+              </h3>
+              <p className="text-center md:text-justify ">
+                O{" "}
+                <span className="text-red-600 font-bold text-2xl text-">
+                  AMOR
+                </span>{" "}
+                é a nossa marca registrada e tornar{" "}
+                <span className="text-red-600 font-bold text-2xl text-">
+                  SONHOS
+                </span>{" "}
+                realidade, o nosso propósito. O seu projeto de Natal é único e
+                totalmente personalizado.
+              </p>
+            </motion.div>
+            <motion.div>
+              <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
+                Como Realizamos o Seu Sonho?
+              </h3>
+              <p className="text-center md:text-justify ">
+                Seja a partir de uma inspiração que viu na nossa galeria, de uma
+                ideia que sempre teve, ou aproveitando os enfeites que já
+                possui, nós criamos a decoração perfeita. Quer trocar os laços,
+                as bolas ou até a árvore? A sua visão é a nossa prioridade, do
+                início ao fim.
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
 }
-
-// Ficou num tamanho exquisito
