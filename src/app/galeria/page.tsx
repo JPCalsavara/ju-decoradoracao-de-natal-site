@@ -1,31 +1,41 @@
-// ==================================================================
-// ARQUIVO: src/app/galeria-completa/page.tsx
-// Este é o componente da página que orquestra tudo.
-// ==================================================================
+// src/app/galeria-completa/page.tsx
 "use client";
 
 import { useState, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-// Importando os componentes e dados necessários
+// 1. Importando o hook e todos os componentes necessários
+import { useProdutos } from "@/hooks/useProdutos";
 import CardArvore from "@/components/CardArvore";
 import FilterControls from "@/components/FilterControls";
 import { OrcamentoForm } from "@/components/OrcamentoForm";
-import { ArvoresData, Arvore } from "@/services/arvoresData";
+import { Arvore } from "@/services/arvoresData";
 
 export default function GaleriaCompletaPage() {
+  // 2. Chamando o hook para buscar os dados do Supabase
+  const { produtos, loading, error } = useProdutos();
+
   // --- Lógica do Filtro ---
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
+
+  // Extrai todas as cores únicas dos produtos carregados para criar os checkboxes
   const availableColors = useMemo(() => {
-    const allColors = ArvoresData.flatMap((arvore) => arvore.cores);
+    if (!produtos) return [];
+    const allColors = produtos.flatMap((arvore) => arvore.cores);
     return [...new Set(allColors)].sort();
-  }, []);
+  }, [produtos]);
+
+  // Filtra as árvores com base nas cores selecionadas
   const filteredArvores = useMemo(() => {
-    if (selectedColors.length === 0) return ArvoresData;
-    return ArvoresData.filter((arvore) =>
+    if (selectedColors.length === 0) {
+      return produtos; // Se nenhum filtro, mostra todos os produtos
+    }
+    return produtos.filter((arvore) =>
       arvore.cores.some((cor) => selectedColors.includes(cor))
     );
-  }, [selectedColors]);
+  }, [selectedColors, produtos]);
+
+  // Função para atualizar o estado do filtro
   const handleFilterChange = (color: string) => {
     setSelectedColors((currentColors) =>
       currentColors.includes(color)
@@ -34,7 +44,7 @@ export default function GaleriaCompletaPage() {
     );
   };
 
-  // --- Lógica dos modais ---
+  // --- Lógica dos modais (sem alterações) ---
   const [selectedTree, setSelectedTree] = useState<Arvore | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const handleSelectTree = (arvore: Arvore) => setSelectedTree(arvore);
@@ -45,6 +55,24 @@ export default function GaleriaCompletaPage() {
     setSelectedTree(null);
   };
 
+  // 3. Renderização condicional para os estados de carregamento e erro
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-lg text-slate-600">A carregar inspirações...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-lg text-red-600">{error}</p>
+      </div>
+    );
+  }
+
+  // 4. Renderização principal da página com os dados carregados
   return (
     <div className="container mx-auto px-4 py-16 md:px-6">
       <div className="text-center mb-12">
@@ -94,6 +122,7 @@ export default function GaleriaCompletaPage() {
         </AnimatePresence>
       </motion.div>
 
+      {/* Lógica dos Modais (sem alterações) */}
       <AnimatePresence>
         {selectedTree && (
           <CardArvore
