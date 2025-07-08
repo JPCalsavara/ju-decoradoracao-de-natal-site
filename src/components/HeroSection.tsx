@@ -46,7 +46,7 @@ const HeroSection = () => {
     <section
       id="inicio"
       // Fundo branco e garantindo altura mínima para preencher a tela
-      className="w-full min-h-screen flex items-center bg-white"
+      className="w-full md:h-screen flex items-center bg-white"
     >
       <div className="container mx-auto grid lg:grid-cols-2 gap-8 items-center px-6 py-0 lg:py-0">
         {/* Lado Esquerdo: Conteúdo de Texto e CTA */}
