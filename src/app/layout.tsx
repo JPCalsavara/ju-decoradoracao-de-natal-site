@@ -6,6 +6,7 @@ import "./globals.css";
 // Importando os componentes de layout
 import NavBar from "@/components/NavBar";
 import { ContactSection } from "@/components/ContactSection";
+import Footer from "@/components/Footer";
 
 // Configuração da fonte Inter
 const inter = Inter({
@@ -65,6 +66,7 @@ export default function RootLayout({
 
         {/* Componente Footer renderizado em todas as páginas */}
         <ContactSection />
+        <Footer></Footer>
       </body>
     </html>
   );
