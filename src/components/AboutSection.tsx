@@ -14,7 +14,7 @@ export function AboutSection() {
         <div className="grid lg:grid-cols-5 gap-12 items-center">
           {/* Coluna da Imagem (ocupa 2 das 5 colunas no desktop) */}
           <motion.div
-            className="lg:col-span-2 w-full h-140 lg:h-[450px] relative"
+            className="lg:col-span-2 w-full h-100 lg:h-[450px] relative"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
