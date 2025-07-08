@@ -56,6 +56,13 @@ const HeroSection = () => {
           initial="hidden"
           animate="visible"
         >
+          <Image
+            className="w-60 h-60 items-end"
+            src="icon.svg"
+            alt="logo"
+            width={48}
+            height={48}
+          />
           <motion.h1
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 leading-tight"
             variants={textItemVariants}
