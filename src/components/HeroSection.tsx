@@ -51,7 +51,7 @@ const HeroSection = () => {
       <div className="container mx-auto grid lg:grid-cols-2 gap-8 items-center px-6 py-0 lg:py-0">
         {/* Lado Esquerdo: Conteúdo de Texto e CTA */}
         <motion.div
-          className="relative w-full h-80 md:h-[500px] lg:h-[600px]"
+          className="relative w-full h-60 md:h-[500px] lg:h-[600px]"
           variants={imageVariants}
           initial="hidden"
           animate="visible"
@@ -73,7 +73,7 @@ const HeroSection = () => {
           animate="visible"
         >
           <motion.h1
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 leading-tight"
+            className="text-3xl md:text-5xl lg:text-6xl font-bold text-slate-800 leading-tight"
             variants={textItemVariants}
           >
             A arte de transformar
