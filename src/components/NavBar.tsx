@@ -9,7 +9,7 @@ import Link from "next/link";
 const NavBar = () => {
   const navTopics: [string, string][] = [
     ["Início", "/"],
-    ["Árvores", "/galeria-completa"],
+    ["Árvores", "/galeria"],
     ["Contato", "#contato"],
   ];
   const [open, setOpen] = useState(false);
