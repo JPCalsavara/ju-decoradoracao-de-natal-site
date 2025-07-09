@@ -77,7 +77,7 @@ const CardArvore = ({
               ></path>
             </svg>
           </motion.button>
-          <div className="relative w-full md:w-1/2 h-120 md:h-auto">
+          <div className="relative w-full md:w-1/2 h-150 md:h-auto">
             <Image
               src={imagemUrl}
               alt={`Foto da árvore ${nome}`}
