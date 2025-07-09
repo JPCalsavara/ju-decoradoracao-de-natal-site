@@ -265,7 +265,7 @@ export function CredibilitySection() {
             viewport={{ once: true, amount: 0.3 }}
             variants={fadeInUp}
           >
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-800">
+            <h3 className="text-4xl md:text-5xl font-bold text-slate-800">
               Como Realizamos o Seu Sonho?
             </h3>
           </motion.div>
