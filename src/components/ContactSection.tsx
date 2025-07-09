@@ -244,7 +244,7 @@ export function ContactSection() {
               Contacto Direto
             </h3>
             <a
-              href="https://wa.me/5515996690551"
+              href="https://wa.me/5515991240551"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-4 group"
@@ -255,12 +255,12 @@ export function ContactSection() {
               <div>
                 <p className="font-bold text-slate-800 text-lg">WhatsApp</p>
                 <p className="text-slate-600 group-hover:text-emerald-700 transition-colors duration-300">
-                  (15) 99669-0551
+                  (15) 99124-0551
                 </p>
               </div>
             </a>
             <a
-              href="https://instagram.com/seu-perfil"
+              href="https://www.instagram.com/ju_decoracao_de_natal/"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-4 group"
@@ -271,12 +271,12 @@ export function ContactSection() {
               <div>
                 <p className="font-bold text-slate-800 text-lg">Instagram</p>
                 <p className="text-slate-600 group-hover:text-pink-700 transition-colors duration-300">
-                  @seu-perfil
+                  @ju_decoracao_de_natal
                 </p>
               </div>
             </a>
             <a
-              href="https://facebook.com/sua-pagina"
+              href="https://www.facebook.com/juliane.calsavara?locale=pt_BR"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-4 group"
@@ -287,7 +287,7 @@ export function ContactSection() {
               <div>
                 <p className="font-bold text-slate-800 text-lg">Facebook</p>
                 <p className="text-slate-600 group-hover:text-blue-700 transition-colors duration-300">
-                  /sua-pagina
+                  /Juliane_Calsavara
                 </p>
               </div>
             </a>
