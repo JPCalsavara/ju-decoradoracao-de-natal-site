@@ -66,7 +66,7 @@ const Footer = () => {
           <p className="mt-2">
             Desenvolvido com ❤️ por{" "}
             <a
-              href="https://www.linkedin.com/in/seu-linkedin/"
+              href="https://www.linkedin.com/in/jo%C3%A3o-pedro-leite-calsavara-b951b6230/"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium text-slate-200 hover:text-red-500 underline underline-offset-2 transition-colors"
