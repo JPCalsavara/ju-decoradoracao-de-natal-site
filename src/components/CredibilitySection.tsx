@@ -4,8 +4,36 @@
 import { motion, animate } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
-// --- 1. Componente para um único item de estatística ---
+// --- 1. Definindo as Variantes de Animação ---
+// Estas são "receitas" de animação que podemos reutilizar.
+
+// Animação para o contêiner que orquestra a entrada dos seus filhos
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2, // Atraso de 0.2s entre cada item filho
+    },
+  },
+};
+
+// Animação para cada item individual, fazendo-o surgir de baixo para cima
+const fadeInUp = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+    },
+  },
+};
+
+// --- 2. Componente para um único item de estatística ---
 const StatItem = ({
   icon,
   finalValue,
@@ -16,15 +44,12 @@ const StatItem = ({
   label: string;
 }) => {
   const [count, setCount] = useState(0);
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.5,
-  });
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.5 });
 
   useEffect(() => {
     if (inView) {
       const controls = animate(0, finalValue, {
-        duration: 2,
+        duration: 2, // A animação do número continua mais lenta para dar destaque
         onUpdate(value) {
           setCount(Math.floor(value));
         },
@@ -34,15 +59,53 @@ const StatItem = ({
   }, [inView, finalValue]);
 
   return (
-    <div ref={ref} className="flex flex-col items-center text-center">
+    // Cada item agora usa a variante 'fadeInUp'
+    <motion.div
+      ref={ref}
+      variants={fadeInUp}
+      className="flex flex-col items-center text-center"
+    >
       <div className="text-red-700 mb-2">{icon}</div>
       <p className="text-4xl md:text-5xl font-bold text-slate-800">+{count}</p>
       <p className="text-md md:text-lg text-slate-600 mt-1">{label}</p>
-    </div>
+    </motion.div>
   );
 };
 
-// --- 2. Ícones para cada estatística ---
+// --- 3. Componente para um item do processo ---
+const ProcessItem = ({
+  icon,
+  title,
+  description,
+  href,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  href: string;
+}) => {
+  return (
+    // Cada item usa a variante 'fadeInUp' e a animação é controlada pelo contêiner pai
+    <motion.div variants={fadeInUp}>
+      <Link href={href} legacyBehavior>
+        <a className="group block p-6 h-full rounded-lg transition-all duration-300 hover:bg-slate-50 hover:shadow-xl hover:-translate-y-2">
+          <div className="flex flex-col items-center text-center">
+            <motion.div
+              className="mb-4 flex items-center justify-center h-20 w-20 rounded-full bg-red-100 text-red-700 transition-all duration-300 group-hover:bg-red-700 group-hover:text-white"
+              whileHover={{ scale: 1.1 }} // Efeito de escala no hover do ícone
+            >
+              {icon}
+            </motion.div>
+            <h4 className="text-xl font-bold text-slate-800 mb-2">{title}</h4>
+            <p className="text-slate-600 text-justify">{description}</p>
+          </div>
+        </a>
+      </Link>
+    </motion.div>
+  );
+};
+
+// --- 4. Ícones ---
 const CalendarIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -96,24 +159,87 @@ const TreeIcon = () => (
     />
   </svg>
 );
+const SparklesIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-10 w-10"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+    />
+  </svg>
+);
+const ImageIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-10 w-10"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+    />
+  </svg>
+);
+const RecycleIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-10 w-10"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4 4v5h5M5.222 9.222a8.963 8.963 0 0112.556 0M19 20v-5h-5m-1.222-4.222a8.963 8.963 0 01-12.556 0"
+    />
+  </svg>
+);
 
-// --- 3. Componente Principal da Seção ---
+// --- 5. Componente Principal da Seção ---
 export function CredibilitySection() {
   return (
-    <section className="w-full md:h-[85vh] bg-white py-20">
+    <section
+      id="credibilidade"
+      className="w-full md:h-[100vh] bg-white py-20 md:pt-30 md:pb-10 overflow-hidden"
+    >
       <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={fadeInUp}
+        >
           <h2 className="text-4xl md:text-6xl font-bold text-slate-800">
             Experiência que Transforma
           </h2>
           <p className="mt-3 max-w-2xl mx-auto text-xl text-slate-600">
-            Nossa paixão pelo Natal se reflete em cada detalhe e em números que
-            demonstram nossa dedicação.
+            A nossa paixão pelo Natal reflete-se em cada detalhe e em números
+            que demonstram a nossa dedicação.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Grid com as 3 estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 max-w-4xl mx-auto">
+        {/* O contêiner agora orquestra a animação dos StatItems */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 max-w-4xl mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+        >
           <StatItem
             icon={<CalendarIcon />}
             finalValue={32}
@@ -129,48 +255,49 @@ export function CredibilitySection() {
             finalValue={1100}
             label="Árvores Montadas"
           />
-        </div>
-
-        {/* --- SEÇÃO DE TEXTO ATUALIZADA --- */}
-        <motion.div
-          className="mt-20 max-w-[75%] mx-auto text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7 }}
-        >
-          <div className="flex flex-col md:flex-row md:justify-between md:flex-1/2 gap-8 text-xl text-slate-600">
-            <motion.div>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
-                O que me motiva?
-              </h3>
-              <p className="text-center md:text-justify ">
-                O{" "}
-                <span className="text-red-600 font-bold text-2xl text-">
-                  AMOR
-                </span>{" "}
-                é a nossa marca registrada e tornar{" "}
-                <span className="text-red-600 font-bold text-2xl text-">
-                  SONHOS
-                </span>{" "}
-                realidade, o nosso propósito. O seu projeto de Natal é único e
-                totalmente personalizado.
-              </p>
-            </motion.div>
-            <motion.div>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
-                Como Realizamos o Seu Sonho?
-              </h3>
-              <p className="text-center md:text-justify ">
-                Seja a partir de uma inspiração que viu na nossa galeria, de uma
-                ideia que sempre teve, ou aproveitando os enfeites que já
-                possui, nós criamos a decoração perfeita. Quer trocar os laços,
-                as bolas ou até a árvore? A sua visão é a nossa prioridade, do
-                início ao fim.
-              </p>
-            </motion.div>
-          </div>
         </motion.div>
+
+        <div className="mt-24">
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeInUp}
+          >
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-800">
+              Como Realizamos o Seu Sonho?
+            </h3>
+          </motion.div>
+
+          {/* O contêiner agora orquestra a animação dos ProcessItems */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={staggerContainer}
+          >
+            <ProcessItem
+              icon={<SparklesIcon />}
+              title="Sonho do Zero"
+              description="Ideal para quem deseja uma decoração completamente nova. Partimos de uma folha em branco para criar um conceito exclusivo que reflete a sua personalidade."
+              href="#contato"
+            />
+            <ProcessItem
+              icon={<ImageIcon />}
+              title="Inspirado"
+              description="Gostou de algo na nossa galeria? Usamos um dos nossos projetos como ponto de partida e adaptamo-lo para o seu espaço, com o seu toque especial."
+              href="#arvores"
+            />
+            <ProcessItem
+              icon={<RecycleIcon />}
+              title="Revitalizar"
+              description="Tem enfeites de valor sentimental? Nós integramos as suas peças existentes com novos elementos para criar uma decoração renovada, cheia de significado."
+              href="#contato"
+            />
+          </motion.div>
+        </div>
       </div>
     </section>
   );
