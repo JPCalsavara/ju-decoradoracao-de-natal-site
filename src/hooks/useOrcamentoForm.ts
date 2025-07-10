@@ -96,7 +96,7 @@ export const useOrcamentoForm = (onClose: () => void) => {
         `Aguardo o contato!`;
       // Deixar mais natural
 
-      const whatsappNumber = "5515996690551";
+      const whatsappNumber = "5515991240551";
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
         message
       )}`;
