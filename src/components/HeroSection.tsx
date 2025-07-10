@@ -82,7 +82,7 @@ const HeroSection = () => {
           </motion.h1>
 
           <motion.div className="mt-8" variants={textItemVariants}>
-            <Link href="#credibilidade" passHref className="">
+            <Link href="#numeros" passHref className="">
               <motion.button
                 className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 transition-colors duration-300"
                 whileHover={{ scale: 1.05, y: -2 }}
