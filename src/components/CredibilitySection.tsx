@@ -98,6 +98,14 @@ const ProcessItem = ({
             </motion.div>
             <h4 className="text-xl font-bold text-slate-800 mb-2">{title}</h4>
             <p className="text-slate-600 text-justify">{description}</p>
+            <div className="flex flex-col items-center gap-2 justify-center mt-4">
+              <p className="text-slate-600 text-justify rounded-full group-hover:bg-red-700 group-hover:text-white py-2 px-4 transition-colors duration-300">
+                Clique para Saber Mais
+              </p>
+              <div className="rotate-90 group-hover:animate-bounce group-hover:text-red-700 p-1 transition-colors duration-300">
+                <TreeIcon />
+              </div>
+            </div>
           </div>
         </a>
       </Link>
@@ -211,53 +219,72 @@ const RecycleIcon = () => (
 // --- 5. Componente Principal da Seção ---
 export function CredibilitySection() {
   return (
-    <section
-      id="credibilidade"
-      className="w-full md:h-[100vh] bg-white py-20 md:pt-30 md:pb-10 overflow-hidden"
-    >
+    <section className="w-full bg-white py-20  overflow-hidden">
       <div className="container mx-auto px-6">
-        <motion.div
-          className="text-center mb-16"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={fadeInUp}
+        <div
+          id="numeros"
+          className="md:h-[100vh] flex flex-col items-center justify-center"
         >
-          <h2 className="text-4xl md:text-6xl font-bold text-slate-800">
-            Experiência que Transforma
-          </h2>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-slate-600">
-            A nossa paixão pelo Natal reflete-se em cada detalhe e em números
-            que demonstram a nossa dedicação.
-          </p>
-        </motion.div>
+          <motion.div
+            className="text-center mb-16"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeInUp}
+          >
+            <h2 className="text-4xl md:text-6xl font-bold text-slate-800">
+              Experiência que Transforma
+            </h2>
+            <p className="mt-3 max-w-2xl mx-auto text-xl text-slate-600">
+              A nossa paixão pelo Natal reflete-se em cada detalhe e em números
+              que demonstram a nossa dedicação.
+            </p>
+          </motion.div>
 
-        {/* O contêiner agora orquestra a animação dos StatItems */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 max-w-4xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
+          {/* O contêiner agora orquestra a animação dos StatItems */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 max-w-4xl mx-auto"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={staggerContainer}
+          >
+            <StatItem
+              icon={<CalendarIcon />}
+              finalValue={32}
+              label="Anos de Experiência"
+            />
+            <StatItem
+              icon={<LocationIcon />}
+              finalValue={23}
+              label="Cidades Atendidas"
+            />
+            <StatItem
+              icon={<TreeIcon />}
+              finalValue={1100}
+              label="Árvores Montadas"
+            />
+          </motion.div>
+          <div className="flex justify-center mt-12">
+            <Link href="#servicos" passHref>
+              <motion.button
+                className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 transition-colors duration-300"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={staggerContainer}
+              >
+                Conheça Nossos Serviços
+              </motion.button>
+            </Link>
+          </div>
+        </div>
+        <div
+          id="servicos"
+          className="md:h-[100vh] flex flex-col items-center justify-center mt-24 md:mt-0 "
         >
-          <StatItem
-            icon={<CalendarIcon />}
-            finalValue={32}
-            label="Anos de Experiência"
-          />
-          <StatItem
-            icon={<LocationIcon />}
-            finalValue={23}
-            label="Cidades Atendidas"
-          />
-          <StatItem
-            icon={<TreeIcon />}
-            finalValue={1100}
-            label="Árvores Montadas"
-          />
-        </motion.div>
-
-        <div className="mt-24">
           <motion.div
             className="text-center mb-16"
             initial="hidden"
