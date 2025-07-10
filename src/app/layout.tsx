@@ -36,8 +36,8 @@ export const metadata: Metadata = {
       "Leve a magia do Natal para seu espaço com decorações personalizadas e cheias de afeto.",
     type: "website",
     locale: "pt_BR",
-    // url: "https://www.seudominio.com.br", // Descomente e adicione seu domínio quando tiver um
-    // siteName: "Ju Decoração de Natal",
+    url: "https://www.ju-decoracao-de-natal.com.br", // Descomente e adicione seu domínio quando tiver um
+    siteName: "Ju Decoração de Natal",
     // images: [ // Adicione uma imagem para compartilhamento
     //   {
     //     url: "https://www.seudominio.com.br/og-image.jpg",
