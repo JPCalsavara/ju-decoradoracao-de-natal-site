@@ -1,11 +1,12 @@
 // src/components/ContactSection.tsx
 "use client";
 
-import { useState, FormEvent } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, FormEvent, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useOrcamentoForm } from "@/hooks/useOrcamentoForm";
+import { useLocalizacao } from "@/hooks/useLocalizacao";
 
-// --- Ícones para os detalhes de contacto ---
+// --- Ícones para os detalhes de contato ---
 const InstagramIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -53,13 +54,23 @@ const ColorCheckboxSelector = ({
   selectedColors: string[];
   onColorChange: (colors: string[]) => void;
 }) => {
-  const PREDEFINED_COLORS = ["Vermelho", "Azul", "Dourado", "Branco", "Rosa"];
+  const PREDEFINED_COLORS = [
+    "Vermelho",
+    "Azul",
+    "Dourado",
+    "Branco",
+    "Rosa",
+    "Prata",
+    "Bege",
+  ];
   const colorMap: { [key: string]: string } = {
     Vermelho: "red",
     Azul: "blue",
     Dourado: "amber",
     Branco: "slate",
     Rosa: "pink",
+    Prata: "slate",
+    Bege: "orange",
   };
   const handleCheckboxChange = (color: string) =>
     onColorChange(
@@ -69,7 +80,7 @@ const ColorCheckboxSelector = ({
     );
   return (
     <div>
-      <label className="font-medium text-slate-700">{title}</label>
+      <label className="font-medium text-slate-700 md:text-lg">{title}</label>
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
         {PREDEFINED_COLORS.map((color) => (
           <label
@@ -83,7 +94,7 @@ const ColorCheckboxSelector = ({
               onChange={() => handleCheckboxChange(color)}
               className={`mr-2 h-4 w-4 accent-${colorMap[color]}-600 rounded`}
             />
-            <span>{color}</span>
+            <span className="md:text-lg">{color}</span>
           </label>
         ))}
       </div>
@@ -99,38 +110,31 @@ const SizeSelector = ({
   onSizeChange: (size: string) => void;
 }) => {
   const SIZES = [
-    "60cm",
-    "90cm",
-    "120cm",
-    "150cm",
-    "180cm",
-    "220cm",
-    "240cm",
-    "270cm",
+    "0.60m",
+    "0.90m",
+    "1.20m",
+    "1.50m",
+    "1.80m",
+    "2.20m",
+    "2.40m",
+    "2.70m",
   ];
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <label className="font-medium text-slate-700">Qual a altura dela?</label>
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-6 gap-y-2 mt-2">
-        {SIZES.map((size) => (
-          <label key={size} className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="tamanhoArvore"
-              value={size}
-              checked={selectedSize === size}
-              onChange={() => onSizeChange(size)}
-              className="mr-2 h-4 w-4 text-red-600"
-            />
-            <span>{size}</span>
-          </label>
-        ))}
-      </div>
-    </motion.div>
+    <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-6 gap-y-2 mt-2">
+      {SIZES.map((size) => (
+        <label key={size} className="flex items-center cursor-pointer">
+          <input
+            type="radio"
+            name="tamanhoArvore"
+            value={size}
+            checked={selectedSize === size}
+            onChange={() => onSizeChange(size)}
+            className="mr-2 h-4 w-4 text-red-600"
+          />
+          <span className="md:text-lg">{size}</span>
+        </label>
+      ))}
+    </div>
   );
 };
 
@@ -156,7 +160,7 @@ const StyleCheckboxSelector = ({
     );
   return (
     <div>
-      <label className="font-medium text-slate-700">
+      <label className="font-medium text-slate-700 md:text-lg">
         Quais estilos de decoração mais gosta?
       </label>
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
@@ -172,7 +176,57 @@ const StyleCheckboxSelector = ({
               onChange={() => handleCheckboxChange(style)}
               className="mr-2 h-4 w-4 text-red-600 rounded"
             />
-            <span>{style}</span>
+            <span className="md:text-lg">{style}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const EnfeiteCheckboxSelector = ({
+  selectedEnfeites,
+  onEnfeiteChange,
+}: {
+  selectedEnfeites: string[];
+  onEnfeiteChange: (enfeites: string[]) => void;
+}) => {
+  const PREDEFINED_ENFEITES = [
+    "Papai Noel",
+    "Esquilo",
+    "Flor",
+    "Pinha",
+    "Urso",
+    "Disney",
+    "Floco de Neve",
+    "Brilho",
+    "Veludo",
+  ];
+  const handleCheckboxChange = (enfeite: string) =>
+    onEnfeiteChange(
+      selectedEnfeites.includes(enfeite)
+        ? selectedEnfeites.filter((e) => e !== enfeite)
+        : [...selectedEnfeites, enfeite]
+    );
+  return (
+    <div>
+      <label className="font-medium text-slate-700 md:text-lg">
+        Quais enfeites de destaque gostaria?
+      </label>
+      <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
+        {PREDEFINED_ENFEITES.map((enfeite) => (
+          <label
+            key={enfeite}
+            className="flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-slate-100"
+          >
+            <input
+              type="checkbox"
+              value={enfeite}
+              checked={selectedEnfeites.includes(enfeite)}
+              onChange={() => handleCheckboxChange(enfeite)}
+              className="mr-2 h-4 w-4 text-red-600 rounded"
+            />
+            <span className="md:text-lg">{enfeite}</span>
           </label>
         ))}
       </div>
@@ -182,40 +236,55 @@ const StyleCheckboxSelector = ({
 
 // --- Componente Principal da Seção "Contato" ---
 export function ContactSection() {
+  const { estados, cidades, loadingEstados, loadingCidades, fetchCidades } =
+    useLocalizacao();
   const [nome, setNome] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [estado, setEstado] = useState("");
+  const [estadoSelecionado, setEstadoSelecionado] = useState("");
+  const [cidadeSelecionada, setCidadeSelecionada] = useState("");
   const [temArvore, setTemArvore] = useState<"nao" | "sim">("nao");
-  const [tamanhoArvore, setTamanhoArvore] = useState("180cm");
+  const [tamanhoArvore, setTamanhoArvore] = useState("1.80m");
   const [coresBolas, setCoresBolas] = useState<string[]>([]);
   const [coresLacos, setCoresLacos] = useState<string[]>([]);
   const [estilos, setEstilos] = useState<string[]>([]);
+  const [enfeites, setEnfeites] = useState<string[]>([]);
 
   const resetForm = () => {
     setNome("");
     setDataNascimento("");
-    setCidade("");
-    setEstado("");
+    setEstadoSelecionado("");
+    setCidadeSelecionada("");
     setTemArvore("nao");
     setCoresBolas([]);
     setCoresLacos([]);
     setEstilos([]);
+    setEnfeites([]);
   };
 
   const { isLoading, isSuccess, handleSubmit } = useOrcamentoForm(resetForm);
 
+  useEffect(() => {
+    if (estadoSelecionado) {
+      fetchCidades(estadoSelecionado);
+    }
+  }, [estadoSelecionado, fetchCidades]);
+
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
+    const nomeEstado =
+      estados.find((uf) => uf.sigla === estadoSelecionado)?.nome || "";
     handleSubmit({
       nome,
       dataNascimento,
-      cidade,
-      estado,
+      cidade: cidadeSelecionada,
+      estado: nomeEstado,
+      tipoDeServico: "Contato Geral",
+      titulo: "Pedido do Formulário Principal",
       temArvore,
       tamanhoArvore,
       coresBolas,
       coresLacos,
+      enfeites,
       estilos,
     });
   };
@@ -292,136 +361,174 @@ export function ContactSection() {
               </div>
             </a>
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
+            className="bg-slate-50 p-8 rounded-lg shadow-md"
           >
-            <h3 className="text-2xl font-bold text-slate-700">
-              Formulário Árvore dos Sonhos
-            </h3>
-            <div className="bg-slate-50 p-8 rounded-lg shadow-md">
-              {isSuccess ? (
-                <div className="text-center py-10">
-                  <h3 className="text-2xl font-bold text-emerald-700">
-                    Obrigado!
-                  </h3>
-                  <p className="text-slate-600 mt-2">
-                    A sua mensagem foi enviada. Estamos a redirecioná-lo para o
-                    WhatsApp.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleFormSubmit} className="space-y-6">
+            {isSuccess ? (
+              <div className="text-center py-10">
+                <h3 className="text-2xl font-bold text-emerald-700">
+                  Obrigado!
+                </h3>
+                <p className="text-slate-600 mt-2">
+                  A sua mensagem foi enviada. Estamos a redirecioná-lo para o
+                  WhatsApp.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleFormSubmit} className="space-y-6">
+                <input
+                  type="text"
+                  placeholder="O seu nome completo"
+                  required
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  className="w-full p-3 border rounded-lg"
+                />
+                <div>
+                  <label
+                    htmlFor="dataNascimento"
+                    className="block text-sm font-medium text-slate-700 mb-1"
+                  >
+                    Data de Nascimento
+                  </label>
                   <input
-                    type="text"
-                    placeholder="O seu nome completo"
+                    type="date"
+                    id="dataNascimento"
                     required
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
+                    value={dataNascimento}
+                    onChange={(e) => setDataNascimento(e.target.value)}
                     className="w-full p-3 border rounded-lg"
                   />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
-                      htmlFor="dataNascimento"
+                      htmlFor="estado"
                       className="block text-sm font-medium text-slate-700 mb-1"
                     >
-                      Data de Nascimento
+                      Estado
                     </label>
-                    <input
-                      type="date"
-                      id="dataNascimento"
+                    <select
+                      id="estado"
+                      value={estadoSelecionado}
+                      onChange={(e) => setEstadoSelecionado(e.target.value)}
                       required
-                      value={dataNascimento}
-                      onChange={(e) => setDataNascimento(e.target.value)}
-                      className="w-full p-3 border rounded-lg"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="A sua Cidade"
-                      required
-                      value={cidade}
-                      onChange={(e) => setCidade(e.target.value)}
-                      className="w-full p-3 border rounded-lg"
-                    />
-                    <input
-                      type="text"
-                      placeholder="O seu Estado"
-                      required
-                      value={estado}
-                      onChange={(e) => setEstado(e.target.value)}
-                      className="w-full p-3 border rounded-lg"
-                    />
+                      disabled={loadingEstados}
+                      className="w-full p-3 border rounded-lg bg-white"
+                    >
+                      <option value="">
+                        {loadingEstados ? "A carregar..." : "Selecione"}
+                      </option>
+                      {estados.map((estado) => (
+                        <option key={estado.id} value={estado.sigla}>
+                          {estado.nome}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
-                    <label className="font-medium text-slate-700">
-                      Já tem a árvore?
-                    </label>
-                    <div className="flex gap-6 mt-2">
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="temArvoreContato"
-                          value="nao"
-                          checked={temArvore === "nao"}
-                          onChange={() => setTemArvore("nao")}
-                          className="mr-2 h-4 w-4 text-red-600"
-                        />{" "}
-                        Não
-                      </label>
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="temArvoreContato"
-                          value="sim"
-                          checked={temArvore === "sim"}
-                          onChange={() => setTemArvore("sim")}
-                          className="mr-2 h-4 w-4 text-red-600"
-                        />{" "}
-                        Sim
-                      </label>
-                    </div>
-                  </div>
-                  <AnimatePresence>
-                    {temArvore === "sim" && (
-                      <SizeSelector
-                        selectedSize={tamanhoArvore}
-                        onSizeChange={setTamanhoArvore}
-                      />
-                    )}
-                  </AnimatePresence>
-                  <StyleCheckboxSelector
-                    selectedStyles={estilos}
-                    onStyleChange={setEstilos}
-                  />
-                  <ColorCheckboxSelector
-                    title="Cores desejadas para as bolas"
-                    selectedColors={coresBolas}
-                    onColorChange={setCoresBolas}
-                  />
-                  <ColorCheckboxSelector
-                    title="Cores desejadas para os laços"
-                    selectedColors={coresLacos}
-                    onColorChange={setCoresLacos}
-                  />
-                  <div className="flex flex-col items-start">
-                    <motion.button
-                      type="submit"
-                      disabled={isLoading}
-                      className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 disabled:bg-slate-400"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                    <label
+                      htmlFor="cidade"
+                      className="block text-sm font-medium text-slate-700 mb-1"
                     >
-                      {isLoading ? "A enviar..." : "Enviar Pedido"}
-                    </motion.button>
+                      Cidade
+                    </label>
+                    <select
+                      id="cidade"
+                      value={cidadeSelecionada}
+                      onChange={(e) => setCidadeSelecionada(e.target.value)}
+                      required
+                      disabled={!estadoSelecionado || loadingCidades}
+                      className="w-full p-3 border rounded-lg bg-white"
+                    >
+                      <option value="">
+                        {loadingCidades
+                          ? "A carregar..."
+                          : "Selecione um estado"}
+                      </option>
+                      {cidades.map((cidade) => (
+                        <option key={cidade.id} value={cidade.nome}>
+                          {cidade.nome}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                </form>
-              )}
-            </div>
+                </div>
+                <div>
+                  <label className="font-medium text-slate-700">
+                    Já tem a árvore?
+                  </label>
+                  <div className="flex gap-6 mt-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="temArvoreContato"
+                        value="nao"
+                        checked={temArvore === "nao"}
+                        onChange={() => setTemArvore("nao")}
+                        className="mr-2 h-4 w-4 text-red-600"
+                      />{" "}
+                      Não
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="temArvoreContato"
+                        value="sim"
+                        checked={temArvore === "sim"}
+                        onChange={() => setTemArvore("sim")}
+                        className="mr-2 h-4 w-4 text-red-600"
+                      />{" "}
+                      Sim
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label className="font-medium text-slate-700">
+                    {temArvore === "sim"
+                      ? "Qual a altura dela?"
+                      : "Qual altura de árvore você deseja?"}
+                  </label>
+                  <SizeSelector
+                    selectedSize={tamanhoArvore}
+                    onSizeChange={setTamanhoArvore}
+                  />
+                </div>
+                <StyleCheckboxSelector
+                  selectedStyles={estilos}
+                  onStyleChange={setEstilos}
+                />
+                <ColorCheckboxSelector
+                  title="Cores desejadas para as bolas"
+                  selectedColors={coresBolas}
+                  onColorChange={setCoresBolas}
+                />
+                <ColorCheckboxSelector
+                  title="Cores desejadas para os laços"
+                  selectedColors={coresLacos}
+                  onColorChange={setCoresLacos}
+                />
+                <EnfeiteCheckboxSelector
+                  selectedEnfeites={enfeites}
+                  onEnfeiteChange={setEnfeites}
+                />
+                <div className="flex flex-col items-start">
+                  <motion.button
+                    type="submit"
+                    disabled={isLoading}
+                    className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 disabled:bg-slate-400"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {isLoading ? "A enviar..." : "Enviar Pedido"}
+                  </motion.button>
+                </div>
+              </form>
+            )}
           </motion.div>
         </div>
       </div>
