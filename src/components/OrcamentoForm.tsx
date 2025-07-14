@@ -169,6 +169,8 @@ const EnfeiteCheckboxSelector = ({
     "Urso",
     "Disney",
     "Floco de Neve",
+    "Brilho",
+    "Veludo",
   ];
   const handleCheckboxChange = (enfeite: string) => {
     onEnfeiteChange(
