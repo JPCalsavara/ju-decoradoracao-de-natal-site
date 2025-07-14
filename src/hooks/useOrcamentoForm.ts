@@ -5,7 +5,7 @@ import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Arvore } from "@/services/arvoresData";
 
-// --- 1. Interface atualizada com o novo campo 'enfeites' ---
+// A interface de dados não precisa de alterações
 export interface OrcamentoFormData {
   nome: string;
   dataNascimento?: string;
@@ -17,7 +17,7 @@ export interface OrcamentoFormData {
   tamanhoArvore: string;
   coresBolas: string[];
   coresLacos: string[];
-  enfeites: string[]; // NOVO
+  enfeites: string[];
   arvore?: Arvore;
   estilos?: string[];
 }
@@ -27,13 +27,15 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// O nosso custom hook que encapsula toda a lógica de envio
-export const useOrcamentoForm = (onClose: () => void) => {
+// --- O nosso custom hook refatorado ---
+export const useOrcamentoForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (formData: OrcamentoFormData) => {
-    if (isLoading) return;
+  // A função de envio agora retorna o link do WhatsApp em caso de sucesso
+  const handleSubmit = async (
+    formData: OrcamentoFormData
+  ): Promise<string | null> => {
+    if (isLoading) return null;
     setIsLoading(true);
 
     try {
@@ -53,12 +55,11 @@ export const useOrcamentoForm = (onClose: () => void) => {
         estilos,
       } = formData;
 
+      // Formatação dos dados para colunas de texto
       const finalCorBolas =
         coresBolas.length > 0 ? coresBolas.join(", ") : "A definir";
       const finalCorLacos =
         coresLacos.length > 0 ? coresLacos.join(", ") : "A definir";
-      const finalEnfeites =
-        enfeites.length > 0 ? enfeites.join(", ") : "A definir"; // NOVO
       const temArvoreTexto =
         temArvore === "sim" ? `Sim, tamanho de ${tamanhoArvore}` : "Não";
       const estilosSelecionados =
@@ -67,36 +68,39 @@ export const useOrcamentoForm = (onClose: () => void) => {
         ? `${arvore.nome} (${arvore.estilo})`
         : estilosSelecionados;
 
-      // --- 2. Salva os novos dados no Supabase ---
+      // 1. Salva os dados no Supabase
       const { error } = await supabase.from("Orcamentos").insert([
         {
           nome_cliente: nome,
           data_nascimento: dataNascimento || null,
-          cidade: cidade,
-          estado: estado,
+          cidade,
+          estado,
           tipo_de_servico: tipoDeServico,
-          titulo: titulo,
+          titulo,
           possui_arvore: temArvoreTexto,
           cores_bolas: finalCorBolas,
           cores_lacos: finalCorLacos,
-          enfeites: finalEnfeites, // NOVO
+          // --- CORREÇÃO APLICADA AQUI ---
+          // Enviamos o array 'enfeites' diretamente, sem o .join()
+          enfeites: enfeites,
           estilo_inspiracao: estiloInspiracao,
         },
       ]);
 
-      if (error) {
-        throw new Error(`Erro no Supabase: ${error.message}`);
-      }
+      if (error) throw new Error(`Erro no Supabase: ${error.message}`);
 
-      // --- 3. Prepara a mensagem do WhatsApp com os novos dados ---
+      // 2. Prepara a mensagem do WhatsApp
+      const finalEnfeitesString =
+        enfeites.length > 0 ? enfeites.join(", ") : "A definir";
       let messageStart = `Olá! Gostaria de solicitar um orçamento.\n\n`;
-
-      if (tipoDeServico === "Decoração Inspirada") {
+      if (
+        tipoDeServico === "Decoração Inspirada" ||
+        tipoDeServico === "Contato Geral"
+      ) {
         messageStart =
           `Olá! Gostaria de um orçamento para o serviço: *${tipoDeServico}*.\n\n` +
-          `*Título do Projeto:* ${titulo}\n`;
+          (titulo ? `*Título do Projeto:* ${titulo}\n` : "");
       }
-
       const message =
         messageStart +
         `*Nome:* ${nome}\n` +
@@ -107,27 +111,27 @@ export const useOrcamentoForm = (onClose: () => void) => {
         `*Já possui árvore?* ${temArvoreTexto}\n` +
         `*Cores para Bolas:* ${finalCorBolas}\n` +
         `*Cores para Laços:* ${finalCorLacos}\n` +
-        `*Enfeites:* ${finalEnfeites}\n\n` + // NOVO
+        `*Enfeites:* ${finalEnfeitesString}\n\n` +
         `Aguardo o contato!`;
 
-      const whatsappNumber = "5515996690551";
+      const whatsappNumber = "5515991240551";
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
         message
       )}`;
 
-      window.open(whatsappUrl, "_blank");
-      setIsSuccess(true);
-
-      setTimeout(onClose, 3000);
+      // 3. Retorna a URL do WhatsApp em caso de sucesso
+      return whatsappUrl;
     } catch (error) {
       console.error("Erro no envio do formulário:", error);
       alert(
         "Ocorreu um erro ao registar o seu pedido. Por favor, tente novamente."
       );
+      return null; // Retorna null em caso de erro
     } finally {
       setIsLoading(false);
     }
   };
 
-  return { isLoading, isSuccess, handleSubmit };
+  // O hook agora só precisa de retornar o estado de loading e a função de envio
+  return { isLoading, handleSubmit };
 };
