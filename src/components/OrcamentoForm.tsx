@@ -1,12 +1,13 @@
 // src/components/OrcamentoForm.tsx
 "use client";
 
-import { useState, FormEvent } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, FormEvent, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Arvore } from "@/services/arvoresData";
 import { useOrcamentoForm } from "@/hooks/useOrcamentoForm";
+import { useLocalizacao } from "@/hooks/useLocalizacao";
 
-// --- Componentes Auxiliares (Reutilizados) ---
+// --- Componentes Auxiliares (ColorCheckboxSelector, etc.) ---
 const ColorCheckboxSelector = ({
   title,
   selectedColors,
@@ -16,13 +17,23 @@ const ColorCheckboxSelector = ({
   selectedColors: string[];
   onColorChange: (colors: string[]) => void;
 }) => {
-  const PREDEFINED_COLORS = ["Vermelho", "Azul", "Dourado", "Branco", "Rosa"];
+  const PREDEFINED_COLORS = [
+    "Vermelho",
+    "Azul",
+    "Dourado",
+    "Branco",
+    "Rosa",
+    "Prata",
+    "Bege",
+  ];
   const colorMap: { [key: string]: string } = {
     Vermelho: "red",
     Azul: "blue",
     Dourado: "amber",
     Branco: "slate",
     Rosa: "pink",
+    Prata: "slate",
+    Bege: "orange",
   };
 
   const handleCheckboxChange = (color: string) => {
@@ -37,21 +48,24 @@ const ColorCheckboxSelector = ({
     <div>
       <label className="font-medium text-slate-700 md:text-lg">{title}</label>
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
-        {PREDEFINED_COLORS.map((color) => (
-          <label
-            key={color}
-            className={`flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-${colorMap[color]}-100`}
-          >
-            <input
-              type="checkbox"
-              value={color}
-              checked={selectedColors.includes(color)}
-              onChange={() => handleCheckboxChange(color)}
-              className={`mr-2 h-4 w-4 accent-${colorMap[color]}-600 rounded`}
-            />
-            <span className="md:text-lg">{color}</span>
-          </label>
-        ))}
+        {PREDEFINED_COLORS.map((color) => {
+          const tailwindColor = colorMap[color] || "gray";
+          return (
+            <label
+              key={color}
+              className={`flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-${tailwindColor}-100`}
+            >
+              <input
+                type="checkbox"
+                value={color}
+                checked={selectedColors.includes(color)}
+                onChange={() => handleCheckboxChange(color)}
+                className={`mr-2 h-4 w-4 accent-${tailwindColor}-600 border-gray-300 rounded focus:ring-${tailwindColor}-500`}
+              />
+              <span className="md:text-lg">{color}</span>
+            </label>
+          );
+        })}
       </div>
     </div>
   );
@@ -65,40 +79,31 @@ const SizeSelector = ({
   onSizeChange: (size: string) => void;
 }) => {
   const SIZES = [
-    "60cm",
-    "90cm",
-    "120cm",
-    "150cm",
-    "180cm",
-    "220cm",
-    "240cm",
-    "270cm",
+    "0.60m",
+    "0.90m",
+    "1.20m",
+    "1.50m",
+    "1.80m",
+    "2.20m",
+    "2.40m",
+    "2.70m",
   ];
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <label className="font-medium text-slate-700 md:text-lg">
-        Qual a altura dela?
-      </label>
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-6 gap-y-2 mt-2">
-        {SIZES.map((size) => (
-          <label key={size} className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="tamanhoArvore"
-              value={size}
-              checked={selectedSize === size}
-              onChange={() => onSizeChange(size)}
-              className="mr-2 h-4 w-4 text-red-600"
-            />
-            <span className="md:text-lg">{size}</span>
-          </label>
-        ))}
-      </div>
-    </motion.div>
+    <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-6 gap-y-2 mt-2">
+      {SIZES.map((size) => (
+        <label key={size} className="flex items-center cursor-pointer">
+          <input
+            type="radio"
+            name="tamanhoArvore"
+            value={size}
+            checked={selectedSize === size}
+            onChange={() => onSizeChange(size)}
+            className="mr-2 h-4 w-4 text-red-600"
+          />
+          <span className="md:text-lg">{size}</span>
+        </label>
+      ))}
+    </div>
   );
 };
 
@@ -116,7 +121,6 @@ const StyleCheckboxSelector = ({
     "Disney",
     "Minimalista",
   ];
-
   const handleCheckboxChange = (style: string) => {
     onStyleChange(
       selectedStyles.includes(style)
@@ -124,11 +128,10 @@ const StyleCheckboxSelector = ({
         : [...selectedStyles, style]
     );
   };
-
   return (
     <div>
       <label className="font-medium text-slate-700 md:text-lg">
-        Quais estilos de decoração você mais gosta?
+        Quais estilos de decoração mais gosta?
       </label>
       <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
         {PREDEFINED_STYLES.map((style) => (
@@ -151,6 +154,55 @@ const StyleCheckboxSelector = ({
   );
 };
 
+const EnfeiteCheckboxSelector = ({
+  selectedEnfeites,
+  onEnfeiteChange,
+}: {
+  selectedEnfeites: string[];
+  onEnfeiteChange: (enfeites: string[]) => void;
+}) => {
+  const PREDEFINED_ENFEITES = [
+    "Papai Noel",
+    "Esquilo",
+    "Flor",
+    "Pinha",
+    "Urso",
+    "Disney",
+    "Floco de Neve",
+  ];
+  const handleCheckboxChange = (enfeite: string) => {
+    onEnfeiteChange(
+      selectedEnfeites.includes(enfeite)
+        ? selectedEnfeites.filter((e) => e !== enfeite)
+        : [...selectedEnfeites, enfeite]
+    );
+  };
+  return (
+    <div>
+      <label className="font-medium text-slate-700 md:text-lg">
+        Quais enfeites de destaque gostaria?
+      </label>
+      <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
+        {PREDEFINED_ENFEITES.map((enfeite) => (
+          <label
+            key={enfeite}
+            className="flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-slate-100"
+          >
+            <input
+              type="checkbox"
+              value={enfeite}
+              checked={selectedEnfeites.includes(enfeite)}
+              onChange={() => handleCheckboxChange(enfeite)}
+              className="mr-2 h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+            />
+            <span className="md:text-lg">{enfeite}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // --- Componente Principal do Formulário ---
 export function OrcamentoForm({
   arvore,
@@ -160,33 +212,45 @@ export function OrcamentoForm({
   onClose: () => void;
 }) {
   const { isLoading, isSuccess, handleSubmit } = useOrcamentoForm(onClose);
+  const { estados, cidades, loadingEstados, loadingCidades, fetchCidades } =
+    useLocalizacao();
 
-  // --- Estados dos campos do formulário ---
+  // Estados dos campos do formulário
   const [nome, setNome] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [estado, setEstado] = useState("");
+  const [estadoSelecionado, setEstadoSelecionado] = useState("");
+  const [cidadeSelecionada, setCidadeSelecionada] = useState("");
   const [temArvore, setTemArvore] = useState<"nao" | "sim">("nao");
-  const [tamanhoArvore, setTamanhoArvore] = useState(arvore.altura || "180cm");
+  const [tamanhoArvore, setTamanhoArvore] = useState(arvore.altura || "1.80m");
   const [coresBolas, setCoresBolas] = useState<string[]>(arvore.cores || []);
   const [coresLacos, setCoresLacos] = useState<string[]>(arvore.cores || []);
-  // NOVO ESTADO: Pré-seleciona o estilo baseado no card
   const [estilos, setEstilos] = useState<string[]>([arvore.estilo]);
+  const [enfeites, setEnfeites] = useState<string[]>(arvore.enfeites || []);
 
-  // Função que coleta os dados e os envia para o hook
+  useEffect(() => {
+    if (estadoSelecionado) {
+      fetchCidades(estadoSelecionado);
+    }
+  }, [estadoSelecionado, fetchCidades]);
+
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
+    const nomeEstado =
+      estados.find((e) => e.sigla === estadoSelecionado)?.nome || "";
     handleSubmit({
       nome,
       dataNascimento,
-      cidade,
-      estado,
+      cidade: cidadeSelecionada,
+      estado: nomeEstado,
+      tipoDeServico: "Inspirada",
+      titulo: arvore.nome,
       temArvore,
       tamanhoArvore,
       coresBolas,
       coresLacos,
-      estilos, // Passa os estilos para o hook
-      arvore, // Passa a árvore de referência
+      enfeites,
+      estilos,
+      arvore,
     });
   };
 
@@ -218,7 +282,6 @@ export function OrcamentoForm({
         exit={{ y: 50, opacity: 0 }}
         className="relative bg-white rounded-lg shadow-xl w-full max-w-lg md:max-w-2xl max-h-[90vh] flex flex-col"
       >
-        {/* Cabeçalho */}
         <div className="p-6 flex-shrink-0">
           <motion.button
             onClick={onClose}
@@ -251,7 +314,6 @@ export function OrcamentoForm({
             </p>
           </div>
         </div>
-        {/* Corpo do Formulário */}
         <div className="px-6 flex-grow overflow-y-auto">
           <form
             id="orcamento-form"
@@ -279,27 +341,66 @@ export function OrcamentoForm({
                 required
                 value={dataNascimento}
                 onChange={(e) => setDataNascimento(e.target.value)}
+                // --- CORREÇÃO APLICADA AQUI ---
+                min="1930-01-01"
+                max="2007-12-31"
                 className="w-full p-3 border rounded-lg md:text-lg"
               />
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input
-                type="text"
-                placeholder="A sua Cidade"
-                required
-                value={cidade}
-                onChange={(e) => setCidade(e.target.value)}
-                className="w-full p-3 border rounded-lg md:text-lg"
-              />
-              <input
-                type="text"
-                placeholder="O seu Estado"
-                required
-                value={estado}
-                onChange={(e) => setEstado(e.target.value)}
-                className="w-full p-3 border rounded-lg md:text-lg"
-              />
+              <div>
+                <label
+                  htmlFor="estado"
+                  className="block text-sm font-medium text-slate-700 mb-1 md:text-base"
+                >
+                  Estado
+                </label>
+                <select
+                  id="estado"
+                  value={estadoSelecionado}
+                  onChange={(e) => setEstadoSelecionado(e.target.value)}
+                  required
+                  disabled={loadingEstados}
+                  className="w-full p-3 border border-slate-300 rounded-lg md:text-lg bg-white"
+                >
+                  <option value="">
+                    {loadingEstados ? "A carregar..." : "Selecione"}
+                  </option>
+                  {estados.map((estado) => (
+                    <option key={estado.id} value={estado.sigla}>
+                      {estado.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label
+                  htmlFor="cidade"
+                  className="block text-sm font-medium text-slate-700 mb-1 md:text-base"
+                >
+                  Cidade
+                </label>
+                <select
+                  id="cidade"
+                  value={cidadeSelecionada}
+                  onChange={(e) => setCidadeSelecionada(e.target.value)}
+                  required
+                  disabled={!estadoSelecionado || loadingCidades}
+                  className="w-full p-3 border border-slate-300 rounded-lg md:text-lg bg-white"
+                >
+                  <option value="">
+                    {loadingCidades ? "A carregar..." : "Selecione um estado"}
+                  </option>
+                  {cidades.map((cidade) => (
+                    <option key={cidade.id} value={cidade.nome}>
+                      {cidade.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
+
             <div>
               <label className="font-medium text-slate-700 md:text-lg">
                 Já tem a árvore?
@@ -329,21 +430,21 @@ export function OrcamentoForm({
                 </label>
               </div>
             </div>
-            <AnimatePresence>
-              {temArvore === "sim" && (
-                <SizeSelector
-                  selectedSize={tamanhoArvore}
-                  onSizeChange={setTamanhoArvore}
-                />
-              )}
-            </AnimatePresence>
-
-            {/* NOVO CAMPO DE ESTILOS ADICIONADO AQUI */}
+            <div>
+              <label className="font-medium text-slate-700 md:text-lg">
+                {temArvore === "sim"
+                  ? "Qual a altura dela?"
+                  : "Qual altura de árvore você deseja?"}
+              </label>
+              <SizeSelector
+                selectedSize={tamanhoArvore}
+                onSizeChange={setTamanhoArvore}
+              />
+            </div>
             <StyleCheckboxSelector
               selectedStyles={estilos}
               onStyleChange={setEstilos}
             />
-
             <ColorCheckboxSelector
               title="Cores desejadas para as bolas"
               selectedColors={coresBolas}
@@ -354,9 +455,12 @@ export function OrcamentoForm({
               selectedColors={coresLacos}
               onColorChange={setCoresLacos}
             />
+            <EnfeiteCheckboxSelector
+              selectedEnfeites={enfeites}
+              onEnfeiteChange={setEnfeites}
+            />
           </form>
         </div>
-        {/* Rodapé com Botão Fixo */}
         <div className="p-6 mt-auto flex-shrink-0 border-t border-slate-200">
           <button
             type="submit"
