@@ -1,12 +1,12 @@
 // src/components/ContactSection.tsx
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useOrcamentoForm } from "@/hooks/useOrcamentoForm";
-import { useLocalizacao } from "@/hooks/useLocalizacao";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { OrcamentoForm } from "@/components/OrcamentoForm";
+import { Arvore } from "@/services/arvoresData";
 
-// --- Ícones para os detalhes de contato ---
+// --- Ícones para os detalhes de contacto ---
 const InstagramIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -44,496 +44,135 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
-// --- Componentes Auxiliares do Formulário ---
-const ColorCheckboxSelector = ({
-  title,
-  selectedColors,
-  onColorChange,
-}: {
-  title: string;
-  selectedColors: string[];
-  onColorChange: (colors: string[]) => void;
-}) => {
-  const PREDEFINED_COLORS = [
-    "Vermelho",
-    "Azul",
-    "Dourado",
-    "Branco",
-    "Rosa",
-    "Prata",
-    "Bege",
-  ];
-  const colorMap: { [key: string]: string } = {
-    Vermelho: "red",
-    Azul: "blue",
-    Dourado: "amber",
-    Branco: "slate",
-    Rosa: "pink",
-    Prata: "slate",
-    Bege: "orange",
-  };
-  const handleCheckboxChange = (color: string) =>
-    onColorChange(
-      selectedColors.includes(color)
-        ? selectedColors.filter((c) => c !== color)
-        : [...selectedColors, color]
-    );
-  return (
-    <div>
-      <label className="font-medium text-slate-700 md:text-lg">{title}</label>
-      <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
-        {PREDEFINED_COLORS.map((color) => (
-          <label
-            key={color}
-            className={`flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-${colorMap[color]}-100`}
-          >
-            <input
-              type="checkbox"
-              value={color}
-              checked={selectedColors.includes(color)}
-              onChange={() => handleCheckboxChange(color)}
-              className={`mr-2 h-4 w-4 accent-${colorMap[color]}-600 rounded`}
-            />
-            <span className="md:text-lg">{color}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const SizeSelector = ({
-  selectedSize,
-  onSizeChange,
-}: {
-  selectedSize: string;
-  onSizeChange: (size: string) => void;
-}) => {
-  const SIZES = [
-    "0.60m",
-    "0.90m",
-    "1.20m",
-    "1.50m",
-    "1.80m",
-    "2.20m",
-    "2.40m",
-    "2.70m",
-  ];
-  return (
-    <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-6 gap-y-2 mt-2">
-      {SIZES.map((size) => (
-        <label key={size} className="flex items-center cursor-pointer">
-          <input
-            type="radio"
-            name="tamanhoArvore"
-            value={size}
-            checked={selectedSize === size}
-            onChange={() => onSizeChange(size)}
-            className="mr-2 h-4 w-4 text-red-600"
-          />
-          <span className="md:text-lg">{size}</span>
-        </label>
-      ))}
-    </div>
-  );
-};
-
-const StyleCheckboxSelector = ({
-  selectedStyles,
-  onStyleChange,
-}: {
-  selectedStyles: string[];
-  onStyleChange: (styles: string[]) => void;
-}) => {
-  const PREDEFINED_STYLES = [
-    "Clássico",
-    "Contemporâneo",
-    "Rústico",
-    "Disney",
-    "Minimalista",
-  ];
-  const handleCheckboxChange = (style: string) =>
-    onStyleChange(
-      selectedStyles.includes(style)
-        ? selectedStyles.filter((s) => s !== style)
-        : [...selectedStyles, style]
-    );
-  return (
-    <div>
-      <label className="font-medium text-slate-700 md:text-lg">
-        Quais estilos de decoração mais gosta?
-      </label>
-      <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
-        {PREDEFINED_STYLES.map((style) => (
-          <label
-            key={style}
-            className="flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-slate-100"
-          >
-            <input
-              type="checkbox"
-              value={style}
-              checked={selectedStyles.includes(style)}
-              onChange={() => handleCheckboxChange(style)}
-              className="mr-2 h-4 w-4 text-red-600 rounded"
-            />
-            <span className="md:text-lg">{style}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const EnfeiteCheckboxSelector = ({
-  selectedEnfeites,
-  onEnfeiteChange,
-}: {
-  selectedEnfeites: string[];
-  onEnfeiteChange: (enfeites: string[]) => void;
-}) => {
-  const PREDEFINED_ENFEITES = [
-    "Papai Noel",
-    "Esquilo",
-    "Flor",
-    "Pinha",
-    "Urso",
-    "Disney",
-    "Floco de Neve",
-    "Brilho",
-    "Veludo",
-    "Borboleta",
-    "Bolas Gigante",
-  ];
-  const handleCheckboxChange = (enfeite: string) =>
-    onEnfeiteChange(
-      selectedEnfeites.includes(enfeite)
-        ? selectedEnfeites.filter((e) => e !== enfeite)
-        : [...selectedEnfeites, enfeite]
-    );
-  return (
-    <div>
-      <label className="font-medium text-slate-700 md:text-lg">
-        Quais enfeites de destaque gostaria?
-      </label>
-      <div className="flex flex-wrap gap-x-6 gap-y-2 mt-2">
-        {PREDEFINED_ENFEITES.map((enfeite) => (
-          <label
-            key={enfeite}
-            className="flex items-center cursor-pointer p-1 rounded-md transition-colors duration-200 hover:bg-slate-100"
-          >
-            <input
-              type="checkbox"
-              value={enfeite}
-              checked={selectedEnfeites.includes(enfeite)}
-              onChange={() => handleCheckboxChange(enfeite)}
-              className="mr-2 h-4 w-4 text-red-600 rounded"
-            />
-            <span className="md:text-lg">{enfeite}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 // --- Componente Principal da Seção "Contato" ---
 export function ContactSection() {
-  const { estados, cidades, loadingEstados, loadingCidades, fetchCidades } =
-    useLocalizacao();
-  const [nome, setNome] = useState("");
-  const [dataNascimento, setDataNascimento] = useState("");
-  const [estadoSelecionado, setEstadoSelecionado] = useState("");
-  const [cidadeSelecionada, setCidadeSelecionada] = useState("");
-  const [temArvore, setTemArvore] = useState<"nao" | "sim">("nao");
-  const [tamanhoArvore, setTamanhoArvore] = useState("1.80m");
-  const [coresBolas, setCoresBolas] = useState<string[]>([]);
-  const [coresLacos, setCoresLacos] = useState<string[]>([]);
-  const [estilos, setEstilos] = useState<string[]>([]);
-  const [enfeites, setEnfeites] = useState<string[]>([]);
+  // Estado para controlar a visibilidade do modal do formulário
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const resetForm = () => {
-    setNome("");
-    setDataNascimento("");
-    setEstadoSelecionado("");
-    setCidadeSelecionada("");
-    setTemArvore("nao");
-    setCoresBolas([]);
-    setCoresLacos([]);
-    setEstilos([]);
-    setEnfeites([]);
+  // Objeto "fantasma" para passar ao formulário, já que não há uma árvore de inspiração aqui.
+  const dummyArvore: Arvore = {
+    id: 0,
+    nome: "Projeto Personalizado",
+    estilo: "",
+    descricao: "",
+    imagemUrl: "",
+    altura: "1.80m",
+    cores: [],
+    enfeites: [],
   };
 
-  const { isLoading, isSuccess, handleSubmit } = useOrcamentoForm(resetForm);
-
-  useEffect(() => {
-    if (estadoSelecionado) {
-      fetchCidades(estadoSelecionado);
-    }
-  }, [estadoSelecionado, fetchCidades]);
-
-  const handleFormSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const nomeEstado =
-      estados.find((uf) => uf.sigla === estadoSelecionado)?.nome || "";
-    handleSubmit({
-      nome,
-      dataNascimento,
-      cidade: cidadeSelecionada,
-      estado: nomeEstado,
-      tipoDeServico: "Contato Geral",
-      titulo: "Pedido do Formulário Principal",
-      temArvore,
-      tamanhoArvore,
-      coresBolas,
-      coresLacos,
-      enfeites,
-      estilos,
-    });
-  };
+  const handleOpenForm = () => setIsFormOpen(true);
+  const handleCloseForm = () => setIsFormOpen(false);
 
   return (
-    <section id="contato" className="w-full bg-white py-20 scroll-m-20">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
-            Vamos dar vida ao seu Natal?
-          </h2>
-          <p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
-            Tem uma ideia em mente ou precisa de ajuda para começar? Preencha o
-            formulário abaixo ou entre em contacto pelas nossas redes.
-          </p>
+    <>
+      <section id="contato" className="w-full bg-white py-20 scroll-m-20">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800">
+              Vamos dar vida ao seu Natal?
+            </h2>
+            <p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
+              Tem uma ideia em mente ou precisa de ajuda para começar? Preencha
+              o formulário abaixo ou entre em contacto pelas nossas redes.
+            </p>
+          </div>
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            {/* Coluna da Esquerda: Contatos Diretos */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="space-y-6"
+            >
+              <h3 className="text-2xl font-bold text-slate-700">
+                Contacto Direto
+              </h3>
+              <a
+                href="https://wa.me/5515991240551"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 group"
+              >
+                <span className="flex-shrink-0 w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 transition-colors duration-300 group-hover:bg-emerald-600 group-hover:text-white">
+                  <WhatsAppIcon />
+                </span>
+                <div>
+                  <p className="font-bold text-slate-800 text-lg">WhatsApp</p>
+                  <p className="text-slate-600 group-hover:text-emerald-700 transition-colors duration-300">
+                    (15) 99124-0551
+                  </p>
+                </div>
+              </a>
+              <a
+                href="https://www.instagram.com/ju_decoracao_de_natal/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 group"
+              >
+                <span className="flex-shrink-0 w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center text-pink-700 transition-colors duration-300 group-hover:bg-pink-600 group-hover:text-white">
+                  <InstagramIcon />
+                </span>
+                <div>
+                  <p className="font-bold text-slate-800 text-lg">Instagram</p>
+                  <p className="text-slate-600 group-hover:text-pink-700 transition-colors duration-300">
+                    @ju_decoracao_de_natal
+                  </p>
+                </div>
+              </a>
+              <a
+                href="https://www.facebook.com/juliane.calsavara?locale=pt_BR"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 group"
+              >
+                <span className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 transition-colors duration-300 group-hover:bg-blue-600 group-hover:text-white">
+                  <FacebookIcon />
+                </span>
+                <div>
+                  <p className="font-bold text-slate-800 text-lg">Facebook</p>
+                  <p className="text-slate-600 group-hover:text-blue-700 transition-colors duration-300">
+                    /Juliane_Calsavara
+                  </p>
+                </div>
+              </a>
+            </motion.div>
+
+            {/* Coluna da Direita: Chamada para o Formulário */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="bg-slate-50 p-8 rounded-lg shadow-md flex flex-col items-center text-center"
+            >
+              <h3 className="text-2xl font-bold text-slate-700">
+                Formulário Árvore dos Sonhos
+              </h3>
+              <p className="text-slate-600 my-4">
+                Prefere detalhar o seu projeto? Clique abaixo para abrir o nosso
+                formulário completo e nos contar tudo sobre a sua ideia.
+              </p>
+              <motion.button
+                onClick={handleOpenForm}
+                className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Iniciar Orçamento
+              </motion.button>
+            </motion.div>
+          </div>
         </div>
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="space-y-6"
-          >
-            <h3 className="text-2xl font-bold text-slate-700">
-              Contacto Direto
-            </h3>
-            <a
-              href="https://wa.me/5515991240551"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-4 group"
-            >
-              <span className="flex-shrink-0 w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 transition-colors duration-300 group-hover:bg-emerald-600 group-hover:text-white">
-                <WhatsAppIcon />
-              </span>
-              <div>
-                <p className="font-bold text-slate-800 text-lg">WhatsApp</p>
-                <p className="text-slate-600 group-hover:text-emerald-700 transition-colors duration-300">
-                  (15) 99124-0551
-                </p>
-              </div>
-            </a>
-            <a
-              href="https://www.instagram.com/ju_decoracao_de_natal/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-4 group"
-            >
-              <span className="flex-shrink-0 w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center text-pink-700 transition-colors duration-300 group-hover:bg-pink-600 group-hover:text-white">
-                <InstagramIcon />
-              </span>
-              <div>
-                <p className="font-bold text-slate-800 text-lg">Instagram</p>
-                <p className="text-slate-600 group-hover:text-pink-700 transition-colors duration-300">
-                  @ju_decoracao_de_natal
-                </p>
-              </div>
-            </a>
-            <a
-              href="https://www.facebook.com/juliane.calsavara?locale=pt_BR"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-4 group"
-            >
-              <span className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 transition-colors duration-300 group-hover:bg-blue-600 group-hover:text-white">
-                <FacebookIcon />
-              </span>
-              <div>
-                <p className="font-bold text-slate-800 text-lg">Facebook</p>
-                <p className="text-slate-600 group-hover:text-blue-700 transition-colors duration-300">
-                  /Juliane_Calsavara
-                </p>
-              </div>
-            </a>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="bg-slate-50 p-8 rounded-lg shadow-md"
-          >
-            {isSuccess ? (
-              <div className="text-center py-10">
-                <h3 className="text-2xl font-bold text-emerald-700">
-                  Obrigado!
-                </h3>
-                <p className="text-slate-600 mt-2">
-                  A sua mensagem foi enviada. Estamos a redirecioná-lo para o
-                  WhatsApp.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleFormSubmit} className="space-y-6">
-                <input
-                  type="text"
-                  placeholder="O seu nome completo"
-                  required
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  className="w-full p-3 border rounded-lg"
-                />
-                <div>
-                  <label
-                    htmlFor="dataNascimento"
-                    className="block text-sm font-medium text-slate-700 mb-1"
-                  >
-                    Data de Nascimento
-                  </label>
-                  <input
-                    type="date"
-                    id="dataNascimento"
-                    required
-                    value={dataNascimento}
-                    onChange={(e) => setDataNascimento(e.target.value)}
-                    className="w-full p-3 border rounded-lg"
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="estado"
-                      className="block text-sm font-medium text-slate-700 mb-1"
-                    >
-                      Estado
-                    </label>
-                    <select
-                      id="estado"
-                      value={estadoSelecionado}
-                      onChange={(e) => setEstadoSelecionado(e.target.value)}
-                      required
-                      disabled={loadingEstados}
-                      className="w-full p-3 border rounded-lg bg-white"
-                    >
-                      <option value="">
-                        {loadingEstados ? "A carregar..." : "Selecione"}
-                      </option>
-                      {estados.map((estado) => (
-                        <option key={estado.id} value={estado.sigla}>
-                          {estado.nome}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="cidade"
-                      className="block text-sm font-medium text-slate-700 mb-1"
-                    >
-                      Cidade
-                    </label>
-                    <select
-                      id="cidade"
-                      value={cidadeSelecionada}
-                      onChange={(e) => setCidadeSelecionada(e.target.value)}
-                      required
-                      disabled={!estadoSelecionado || loadingCidades}
-                      className="w-full p-3 border rounded-lg bg-white"
-                    >
-                      <option value="">
-                        {loadingCidades
-                          ? "A carregar..."
-                          : "Selecione um estado"}
-                      </option>
-                      {cidades.map((cidade) => (
-                        <option key={cidade.id} value={cidade.nome}>
-                          {cidade.nome}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="font-medium text-slate-700">
-                    Já tem a árvore?
-                  </label>
-                  <div className="flex gap-6 mt-2">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="temArvoreContato"
-                        value="nao"
-                        checked={temArvore === "nao"}
-                        onChange={() => setTemArvore("nao")}
-                        className="mr-2 h-4 w-4 text-red-600"
-                      />{" "}
-                      Não
-                    </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="temArvoreContato"
-                        value="sim"
-                        checked={temArvore === "sim"}
-                        onChange={() => setTemArvore("sim")}
-                        className="mr-2 h-4 w-4 text-red-600"
-                      />{" "}
-                      Sim
-                    </label>
-                  </div>
-                </div>
-                <div>
-                  <label className="font-medium text-slate-700">
-                    {temArvore === "sim"
-                      ? "Qual a altura dela?"
-                      : "Qual altura de árvore você deseja?"}
-                  </label>
-                  <SizeSelector
-                    selectedSize={tamanhoArvore}
-                    onSizeChange={setTamanhoArvore}
-                  />
-                </div>
-                <StyleCheckboxSelector
-                  selectedStyles={estilos}
-                  onStyleChange={setEstilos}
-                />
-                <ColorCheckboxSelector
-                  title="Cores desejadas para as bolas"
-                  selectedColors={coresBolas}
-                  onColorChange={setCoresBolas}
-                />
-                <ColorCheckboxSelector
-                  title="Cores desejadas para os laços"
-                  selectedColors={coresLacos}
-                  onColorChange={setCoresLacos}
-                />
-                <EnfeiteCheckboxSelector
-                  selectedEnfeites={enfeites}
-                  onEnfeiteChange={setEnfeites}
-                />
-                <div className="flex flex-col items-start">
-                  <motion.button
-                    type="submit"
-                    disabled={isLoading}
-                    className="bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-red-800 disabled:bg-slate-400"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {isLoading ? "A enviar..." : "Enviar Pedido"}
-                  </motion.button>
-                </div>
-              </form>
-            )}
-          </motion.div>
-        </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Lógica para renderizar o modal do formulário */}
+      <AnimatePresence>
+        {isFormOpen && (
+          <OrcamentoForm arvore={dummyArvore} onClose={handleCloseForm} />
+        )}
+      </AnimatePresence>
+    </>
   );
 }

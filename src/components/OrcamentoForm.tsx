@@ -7,7 +7,7 @@ import { Arvore } from "@/services/arvoresData";
 import { useOrcamentoForm } from "@/hooks/useOrcamentoForm";
 import { useLocalizacao } from "@/hooks/useLocalizacao";
 
-// --- Componentes Auxiliares (ColorCheckboxSelector, etc.) ---
+// --- 1. Componente Auxiliar para o Seletor de Cores ---
 const ColorCheckboxSelector = ({
   title,
   selectedColors,
@@ -71,6 +71,7 @@ const ColorCheckboxSelector = ({
   );
 };
 
+// --- 2. Componente Auxiliar para o Seletor de Altura ---
 const SizeSelector = ({
   selectedSize,
   onSizeChange,
@@ -107,6 +108,7 @@ const SizeSelector = ({
   );
 };
 
+// --- 3. Componente Auxiliar para o Seletor de Estilos ---
 const StyleCheckboxSelector = ({
   selectedStyles,
   onStyleChange,
@@ -154,6 +156,7 @@ const StyleCheckboxSelector = ({
   );
 };
 
+// --- 4. Componente Auxiliar para o Seletor de Enfeites ---
 const EnfeiteCheckboxSelector = ({
   selectedEnfeites,
   onEnfeiteChange,
@@ -207,7 +210,7 @@ const EnfeiteCheckboxSelector = ({
   );
 };
 
-// --- Componente Principal do Formulário ---
+// --- 5. Componente Principal do Formulário ---
 export function OrcamentoForm({
   arvore,
   onClose,
@@ -215,7 +218,7 @@ export function OrcamentoForm({
   arvore: Arvore;
   onClose: () => void;
 }) {
-  const { isLoading, isSuccess, handleSubmit } = useOrcamentoForm(onClose);
+  const { isLoading, handleSubmit } = useOrcamentoForm();
   const { estados, cidades, loadingEstados, loadingCidades, fetchCidades } =
     useLocalizacao();
 
@@ -230,6 +233,7 @@ export function OrcamentoForm({
   const [coresLacos, setCoresLacos] = useState<string[]>(arvore.cores || []);
   const [estilos, setEstilos] = useState<string[]>([arvore.estilo]);
   const [enfeites, setEnfeites] = useState<string[]>(arvore.enfeites || []);
+  const [successUrl, setSuccessUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (estadoSelecionado) {
@@ -237,17 +241,18 @@ export function OrcamentoForm({
     }
   }, [estadoSelecionado, fetchCidades]);
 
-  const handleFormSubmit = (e: FormEvent) => {
+  const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const nomeEstado =
       estados.find((e) => e.sigla === estadoSelecionado)?.nome || "";
-    handleSubmit({
+
+    const url = await handleSubmit({
       nome,
       dataNascimento,
       cidade: cidadeSelecionada,
       estado: nomeEstado,
       tipoDeServico: "Inspirada",
-      titulo: arvore.nome,
+      titulo: arvore.nome, // O título é definido diretamente pelo nome da árvore
       temArvore,
       tamanhoArvore,
       coresBolas,
@@ -256,23 +261,36 @@ export function OrcamentoForm({
       estilos,
       arvore,
     });
+
+    if (url) {
+      setSuccessUrl(url);
+    }
   };
 
-  if (isSuccess) {
+  // Tela de Sucesso
+  if (successUrl) {
     return (
-      <div className="fixed inset-0 bg-black/80 z-[10002] flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/80 z-[10002] flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white p-10 rounded-lg text-center shadow-2xl"
+          className="bg-white p-10 rounded-lg text-center shadow-2xl max-w-md"
         >
           <h2 className="text-2xl md:text-3xl font-bold text-emerald-700">
             Obrigado!
           </h2>
           <p className="text-slate-600 mt-2 md:text-lg">
-            O seu pedido foi registado. Estamos a redirecioná-lo para o
-            WhatsApp.
+            O seu pedido foi registado. Clique abaixo para nos enviar os
+            detalhes por WhatsApp e finalizar a sua solicitação.
           </p>
+          <a
+            href={successUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-block bg-emerald-500 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-lg hover:bg-emerald-600 transition-colors"
+          >
+            Abrir Conversa no WhatsApp
+          </a>
         </motion.div>
       </div>
     );
@@ -345,13 +363,11 @@ export function OrcamentoForm({
                 required
                 value={dataNascimento}
                 onChange={(e) => setDataNascimento(e.target.value)}
-                // --- CORREÇÃO APLICADA AQUI ---
                 min="1930-01-01"
                 max="2007-12-31"
                 className="w-full p-3 border rounded-lg md:text-lg"
               />
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
@@ -366,7 +382,7 @@ export function OrcamentoForm({
                   onChange={(e) => setEstadoSelecionado(e.target.value)}
                   required
                   disabled={loadingEstados}
-                  className="w-full p-3 border border-slate-300 rounded-lg md:text-lg bg-white"
+                  className="w-full p-3 border rounded-lg md:text-lg bg-white"
                 >
                   <option value="">
                     {loadingEstados ? "A carregar..." : "Selecione"}
@@ -391,7 +407,7 @@ export function OrcamentoForm({
                   onChange={(e) => setCidadeSelecionada(e.target.value)}
                   required
                   disabled={!estadoSelecionado || loadingCidades}
-                  className="w-full p-3 border border-slate-300 rounded-lg md:text-lg bg-white"
+                  className="w-full p-3 border rounded-lg md:text-lg bg-white"
                 >
                   <option value="">
                     {loadingCidades ? "A carregar..." : "Selecione um estado"}
@@ -404,7 +420,6 @@ export function OrcamentoForm({
                 </select>
               </div>
             </div>
-
             <div>
               <label className="font-medium text-slate-700 md:text-lg">
                 Já tem a árvore?
