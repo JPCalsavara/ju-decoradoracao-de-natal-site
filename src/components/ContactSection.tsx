@@ -147,7 +147,7 @@ const StyleCheckboxSelector = ({
 }) => {
   const PREDEFINED_STYLES = [
     "Clássico",
-    "Moderno",
+    "Contemporâneo",
     "Rústico",
     "Disney",
     "Minimalista",
