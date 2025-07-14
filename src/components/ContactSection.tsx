@@ -201,6 +201,8 @@ const EnfeiteCheckboxSelector = ({
     "Floco de Neve",
     "Brilho",
     "Veludo",
+    "Borboleta",
+    "Bolas Gigante",
   ];
   const handleCheckboxChange = (enfeite: string) =>
     onEnfeiteChange(
