@@ -221,7 +221,7 @@ export default function GaleriaCompletaPage() {
 
       <motion.div
         layout
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 min-h-[500px]"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 min-h-[300px]"
       >
         <AnimatePresence>
           {paginatedProdutos.length > 0 ? (
