@@ -18,8 +18,8 @@ const ArrowButton = ({
       e.stopPropagation();
       onClick(e);
     }}
-    className="absolute top-1/2 -translate-y-1/2 bg-red-700 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-800 transition-colors z-[10002]"
-    style={direction === "left" ? { left: "1rem" } : { right: "1rem" }}
+    className="absolute top-1/2 -translate-y-1/2 bg-red-700 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-800 transition-colors z-10"
+    style={direction === "left" ? { left: "0.5rem" } : { right: "0.5rem" }}
     whileTap={{ scale: 0.9 }}
     whileHover={{ scale: 1.1 }}
   >
@@ -136,7 +136,6 @@ const ProdutoCard = ({
   // Versão do card expandido (modal)
   return (
     <>
-      {/* Overlay do fundo */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -145,15 +144,10 @@ const ProdutoCard = ({
         className="fixed inset-0 bg-black/70 z-[10000]"
       />
 
-      {/* Botões de navegação agora são renderizados aqui */}
-      {onPrev && <ArrowButton onClick={() => onPrev()} direction="left" />}
-      {onNext && <ArrowButton onClick={() => onNext()} direction="right" />}
-
-      {/* Contêiner que centraliza o card */}
       <div className="fixed inset-0 z-[10001] p-0 flex items-center justify-center pointer-events-none">
         <motion.div
           layoutId={`card-produto-${id}`}
-          className="relative w-[90%] h-[85%] md:w-[80%] md:h-[80%] md:max-w-6xl md:max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl pointer-events-auto"
+          className="relative w-full h-full sm:w-[90%] sm:h-[85%] sm:max-w-6xl sm:max-h-[90vh] bg-white rounded-none sm:rounded-xl overflow-hidden flex flex-col sm:flex-row shadow-2xl pointer-events-auto"
         >
           <motion.button
             onClick={onExpand}
@@ -190,17 +184,24 @@ const ProdutoCard = ({
                 x: { type: "spring", stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 },
               }}
-              className="w-full h-full flex flex-col md:flex-row"
+              className="w-full h-full flex flex-col sm:flex-row"
             >
-              <div className="relative w-full md:w-1/2 h-1/2 md:h-full flex-shrink-0">
+              <div className="relative w-full sm:w-1/2 h-1/2 sm:h-full flex-shrink-0">
                 <Image
                   src={imagemUrl}
                   alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
                   fill
                   className="object-cover"
                 />
+                {/* Botões de navegação estão sempre sobre a imagem agora */}
+                {onPrev && (
+                  <ArrowButton onClick={() => onPrev()} direction="left" />
+                )}
+                {onNext && (
+                  <ArrowButton onClick={() => onNext()} direction="right" />
+                )}
               </div>
-              <div className="w-full md:w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
+              <div className="w-full sm:w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
                 <div>
                   <span className="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
                     {tipo}
