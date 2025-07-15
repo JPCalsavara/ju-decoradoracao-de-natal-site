@@ -59,6 +59,7 @@ export function ContactSection() {
     altura: "1.80m",
     cores: [],
     enfeites: [],
+    tipo: "",
   };
 
   const handleOpenForm = () => setIsFormOpen(true);
