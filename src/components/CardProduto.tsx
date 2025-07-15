@@ -1,23 +1,81 @@
 // src/components/ProdutoCard.tsx
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-// A interface Arvore pode ser usada, mas a renomeamos como Produto para clareza
 import { Arvore as Produto } from "@/services/arvoresData";
+
+// --- Componente Auxiliar para os Botões de Seta ---
+const ArrowButton = ({
+  onClick,
+  direction,
+}: {
+  onClick: () => void;
+  direction: "left" | "right";
+}) => (
+  <motion.button
+    onClick={(e) => {
+      e.stopPropagation(); // Impede que o clique no botão feche o modal
+      onClick();
+    }}
+    className="absolute top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-black/50 transition-colors z-10"
+    style={direction === "left" ? { left: "1rem" } : { right: "1rem" }}
+    whileTap={{ scale: 0.9 }}
+    whileHover={{ scale: 1.1 }}
+  >
+    {direction === "left" ? (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M15 19l-7-7 7-7"
+        />
+      </svg>
+    ) : (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9 5l7 7-7 7"
+        />
+      </svg>
+    )}
+  </motion.button>
+);
 
 const ProdutoCard = ({
   produto,
   onExpand,
   isExpanded = false,
   onOpenForm,
+  onNext,
+  onPrev,
+  currentIndex,
+  totalItems,
 }: {
   produto: Produto;
   onExpand: () => void;
   isExpanded?: boolean;
   onOpenForm?: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
+  currentIndex?: number;
+  totalItems?: number;
 }) => {
-  // Desestruturando as propriedades, incluindo o 'tipo'
   const {
     id,
     nome,
@@ -45,7 +103,6 @@ const ProdutoCard = ({
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          {/* Tag para mostrar o tipo de produto */}
           <span className="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
             {tipo}
           </span>
@@ -69,16 +126,14 @@ const ProdutoCard = ({
         className="fixed inset-0 bg-black/70 z-[10000]"
       />
       <div className="fixed inset-0 flex items-center justify-center z-[10001] p-2 md:p-4">
-        {/* --- CORREÇÃO DE TAMANHO APLICADA AQUI --- */}
-        {/* A largura máxima agora é maior em telas grandes (lg) */}
         <motion.div
           layoutId={`card-produto-${id}`}
-          className="relative w-[90%] max-w-md md:max-w-4xl lg:max-w-8xl max-h-[90vh] lg:h-200 bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
+          className="relative w-[90%] max-w-md md:max-w-4xl lg:max-w-6xl max-h-[90vh] lg:h-200 bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
         >
           <motion.button
             onClick={onExpand}
             aria-label="Fechar"
-            className="absolute top-3 right-3 z-10 w-8 md:w-10 h-8 md:h-10 bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
+            className="absolute top-3 right-3 z-20 w-8 md:w-10 h-8 md:h-10 bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
             whileHover={{ scale: 1.1, rotate: 90 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -92,18 +147,40 @@ const ProdutoCard = ({
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth="2"
+                strokeWidth={2}
                 d="M6 18L18 6M6 6l12 12"
               ></path>
             </svg>
           </motion.button>
           <div className="relative w-full md:w-1/2 h-96 md:h-auto">
-            <Image
-              src={imagemUrl}
-              alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
-              fill
-              className="object-cover"
-            />
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={id} // A chave garante que a animação ocorra quando o produto muda
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="w-full h-full"
+              >
+                <Image
+                  src={imagemUrl}
+                  alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Botões de Navegação */}
+            {onPrev && <ArrowButton onClick={onPrev} direction="left" />}
+            {onNext && <ArrowButton onClick={onNext} direction="right" />}
+
+            {/* Contador de Itens */}
+            {currentIndex && totalItems && (
+              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs font-bold px-3 py-1 rounded-full">
+                {currentIndex} / {totalItems}
+              </div>
+            )}
           </div>
           <div className="w-full md:w-1/2 p-6 md:p-6 overflow-y-auto flex flex-col justify-between">
             <div>
@@ -118,7 +195,6 @@ const ProdutoCard = ({
               </p>
               <p className="text-slate-600 mb-6 md:text-lg">{descricao}</p>
               <div className="space-y-4">
-                {/* A altura só é mostrada se for uma 'Árvore' */}
                 {tipo === "Árvore" && (
                   <div>
                     <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
