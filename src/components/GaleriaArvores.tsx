@@ -7,7 +7,7 @@ import Link from "next/link";
 
 // 1. Importando o novo hook e os componentes necessários
 import { useProdutos } from "@/hooks/useProdutos";
-import CardArvore from "./CardArvore";
+import CardArvore from "./CardProduto";
 import { OrcamentoForm } from "./OrcamentoForm";
 import { Arvore } from "../services/arvoresData";
 
@@ -62,7 +62,7 @@ export function GaleriaArvores() {
             {arvoresPreview.map((arvore) => (
               <CardArvore
                 key={arvore.id}
-                arvore={arvore}
+                produto={arvore}
                 onExpand={() => handleSelectTree(arvore)}
               />
             ))}
@@ -88,7 +88,7 @@ export function GaleriaArvores() {
           <CardArvore
             isExpanded
             key={selectedTree.id}
-            arvore={selectedTree}
+            produto={selectedTree}
             onExpand={handleCloseTree}
             onOpenForm={handleOpenForm}
           />
