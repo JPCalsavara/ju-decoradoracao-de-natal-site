@@ -16,7 +16,7 @@ const ArrowButton = ({
   <motion.button
     onClick={(e) => {
       e.stopPropagation(); // Impede que o clique no botão feche o modal
-      onClick();
+      onClick(e);
     }}
     className="absolute top-1/2 -translate-y-1/2 bg-black/40 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-black/60 transition-colors z-20"
     style={direction === "left" ? { left: "1rem" } : { right: "1rem" }}
