@@ -26,6 +26,7 @@ const ColorCheckboxSelector = ({
     "Prata",
     "Bege",
     "Nude",
+    "Verde",
   ];
   const colorMap: { [key: string]: string } = {
     Vermelho: "red",
@@ -36,6 +37,7 @@ const ColorCheckboxSelector = ({
     Prata: "slate",
     Bege: "orange",
     Nude: "amber",
+    Verde: "green",
   };
 
   const handleCheckboxChange = (color: string) => {
@@ -179,6 +181,7 @@ const EnfeiteCheckboxSelector = ({
     "Borboleta",
     "Bola Gigante",
     "Cereija",
+    "Pelucia",
   ];
   const handleCheckboxChange = (enfeite: string) => {
     onEnfeiteChange(
