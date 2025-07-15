@@ -1,36 +1,54 @@
+// src/components/ProdutoCard.tsx
+"use client";
+
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Arvore } from "@/services/arvoresData"; // Supondo que a interface Arvore venha daqui
+// A interface Arvore pode ser usada, mas a renomeamos como Produto para clareza
+import { Arvore as Produto } from "@/services/arvoresData";
 
-const CardArvore = ({
-  arvore,
+const ProdutoCard = ({
+  produto,
   onExpand,
   isExpanded = false,
   onOpenForm,
 }: {
-  arvore: Arvore;
+  produto: Produto;
   onExpand: () => void;
   isExpanded?: boolean;
   onOpenForm?: () => void;
 }) => {
-  const { id, nome, estilo, imagemUrl, descricao, altura, cores, enfeites } =
-    arvore;
+  // Desestruturando as propriedades, incluindo o 'tipo'
+  const {
+    id,
+    nome,
+    estilo,
+    imagemUrl,
+    descricao,
+    altura,
+    cores,
+    enfeites,
+    tipo,
+  } = produto;
 
   // Versão do card na galeria
   if (!isExpanded) {
     return (
       <motion.div
-        layoutId={`card-arvore-${id}`}
+        layoutId={`card-produto-${id}`}
         onClick={onExpand}
-        className="w-full h-full bg-white  rounded-lg overflow-hidden shadow-md cursor-pointer group flex flex-col"
+        className="w-full h-full bg-white rounded-lg overflow-hidden shadow-md cursor-pointer group flex flex-col"
       >
         <div className="relative w-full h-80">
           <Image
             src={imagemUrl}
-            alt={`Foto da árvore ${nome}`}
+            alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105 group-hover:bg-white/50"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          {/* Tag para mostrar o tipo de produto */}
+          <span className="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+            {tipo}
+          </span>
         </div>
         <div className="p-4 flex flex-col flex-grow">
           <h3 className="text-xl font-bold text-slate-800">{nome}</h3>
@@ -51,9 +69,11 @@ const CardArvore = ({
         className="fixed inset-0 bg-black/70 z-[10000]"
       />
       <div className="fixed inset-0 flex items-center justify-center z-[10001] p-2 md:p-4">
+        {/* --- CORREÇÃO DE TAMANHO APLICADA AQUI --- */}
+        {/* A largura máxima agora é maior em telas grandes (lg) */}
         <motion.div
-          layoutId={`card-arvore-${id}`}
-          className="relative w-[90%] max-w-md md:max-w-5xl max-h-[90vh] md:min-h-[85vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
+          layoutId={`card-produto-${id}`}
+          className="relative w-[90%] max-w-md md:max-w-4xl lg:max-w-8xl max-h-[90vh] lg:h-200 bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
         >
           <motion.button
             onClick={onExpand}
@@ -77,16 +97,19 @@ const CardArvore = ({
               ></path>
             </svg>
           </motion.button>
-          <div className="relative w-full md:w-1/2 h-150 md:h-auto">
+          <div className="relative w-full md:w-1/2 h-96 md:h-auto">
             <Image
               src={imagemUrl}
-              alt={`Foto da árvore ${nome}`}
+              alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
               fill
               className="object-cover"
             />
           </div>
           <div className="w-full md:w-1/2 p-6 md:p-6 overflow-y-auto flex flex-col justify-between">
             <div>
+              <span className="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
+                {tipo}
+              </span>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-800 pr-8">
                 {nome}
               </h2>
@@ -95,16 +118,19 @@ const CardArvore = ({
               </p>
               <p className="text-slate-600 mb-6 md:text-lg">{descricao}</p>
               <div className="space-y-4">
-                <div>
-                  <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
-                    Detalhes
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="text-sm md:text-md bg-slate-200 text-slate-700 px-3 py-1 rounded-full">
-                      📏 {altura}
-                    </span>
+                {/* A altura só é mostrada se for uma 'Árvore' */}
+                {tipo === "Árvore" && (
+                  <div>
+                    <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
+                      Detalhes
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="text-sm md:text-md bg-slate-200 text-slate-700 px-3 py-1 rounded-full">
+                        📏 {altura}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div>
                   <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
                     Cores Principais
@@ -154,4 +180,4 @@ const CardArvore = ({
   );
 };
 
-export default CardArvore;
+export default ProdutoCard;
