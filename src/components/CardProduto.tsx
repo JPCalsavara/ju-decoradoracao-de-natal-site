@@ -15,10 +15,10 @@ const ArrowButton = ({
 }) => (
   <motion.button
     onClick={(e) => {
-      e.stopPropagation(); // Impede que o clique no botão feche o modal
+      e.stopPropagation();
       onClick(e);
     }}
-    className="absolute top-1/2 -translate-y-1/2 bg-black/40 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-black/60 transition-colors z-20"
+    className="absolute top-1/2 -translate-y-1/2 bg-red-700 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-800 transition-colors z-[10002]"
     style={direction === "left" ? { left: "1rem" } : { right: "1rem" }}
     whileTap={{ scale: 0.9 }}
     whileHover={{ scale: 1.1 }}
@@ -60,7 +60,7 @@ const ArrowButton = ({
 // --- Variantes para a Animação de Deslize do Carrossel ---
 const variants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? "100%" : "-100%",
+    x: direction > 0 ? 1000 : -1000,
     opacity: 0,
   }),
   center: {
@@ -70,7 +70,7 @@ const variants = {
   },
   exit: (direction: number) => ({
     zIndex: 0,
-    x: direction < 0 ? "100%" : "-100%",
+    x: direction < 0 ? 1000 : -1000,
     opacity: 0,
   }),
 };
@@ -91,6 +91,8 @@ const ProdutoCard = ({
   onNext?: () => void;
   onPrev?: () => void;
   direction?: number;
+  currentIndex?: number;
+  totalItems?: number;
 }) => {
   const {
     id,
@@ -131,9 +133,10 @@ const ProdutoCard = ({
     );
   }
 
-  // Versão do card expandido (modal com carrossel)
+  // Versão do card expandido (modal)
   return (
     <>
+      {/* Overlay do fundo */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -142,32 +145,15 @@ const ProdutoCard = ({
         className="fixed inset-0 bg-black/70 z-[10000]"
       />
 
-      {/* Botões de navegação agora ficam fora do card principal para não serem afetados pela animação de layout */}
-      <div className="fixed inset-0 z-[10001] flex items-center justify-center p-0">
-        {onPrev && (
-          <ArrowButton
-            onClick={(e) => {
-              e.stopPropagation();
-              onPrev();
-            }}
-            direction="left"
-          />
-        )}
-        {onNext && (
-          <ArrowButton
-            onClick={(e) => {
-              e.stopPropagation();
-              onNext();
-            }}
-            direction="right"
-          />
-        )}
-      </div>
+      {/* Botões de navegação agora são renderizados aqui */}
+      {onPrev && <ArrowButton onClick={() => onPrev()} direction="left" />}
+      {onNext && <ArrowButton onClick={() => onNext()} direction="right" />}
 
+      {/* Contêiner que centraliza o card */}
       <div className="fixed inset-0 z-[10001] p-0 flex items-center justify-center pointer-events-none">
         <motion.div
           layoutId={`card-produto-${id}`}
-          className="relative w-full h-full md:w-[80%] md:h-[80%] md:max-w-6xl md:max-h-[90vh] bg-white rounded-none md:rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl pointer-events-auto"
+          className="relative w-[90%] h-[85%] md:w-[80%] md:h-[80%] md:max-w-6xl md:max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl pointer-events-auto"
         >
           <motion.button
             onClick={onExpand}
@@ -192,11 +178,9 @@ const ProdutoCard = ({
             </svg>
           </motion.button>
 
-          {/* --- CORREÇÃO APLICADA AQUI --- */}
-          {/* O AnimatePresence agora envolve o conteúdo que muda (a imagem e o texto) */}
-          <AnimatePresence initial={false} custom={direction} mode="wait">
+          <AnimatePresence initial={false} custom={direction}>
             <motion.div
-              key={id} // A chave no elemento animado é o que dispara a animação de entrada/saída
+              key={id}
               custom={direction}
               variants={variants}
               initial="enter"
@@ -206,21 +190,9 @@ const ProdutoCard = ({
                 x: { type: "spring", stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 },
               }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.5}
-              onDragEnd={(e, { offset, velocity }) => {
-                const swipe = Math.abs(offset.x) * velocity.x;
-                if (swipe < -10000 && onNext) {
-                  onNext();
-                } else if (swipe > 10000 && onPrev) {
-                  onPrev();
-                }
-              }}
               className="w-full h-full flex flex-col md:flex-row"
             >
-              {/* Secção da Imagem */}
-              <div className="relative w-full md:w-1/2 h-96 md:h-auto flex-shrink-0">
+              <div className="relative w-full md:w-1/2 h-1/2 md:h-full flex-shrink-0">
                 <Image
                   src={imagemUrl}
                   alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
@@ -228,8 +200,6 @@ const ProdutoCard = ({
                   className="object-cover"
                 />
               </div>
-
-              {/* Secção do Conteúdo */}
               <div className="w-full md:w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
                 <div>
                   <span className="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
