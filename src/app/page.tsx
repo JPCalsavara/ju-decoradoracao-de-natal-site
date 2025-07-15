@@ -6,10 +6,12 @@ import HeroSection from "@/components/HeroSection";
 export default function Home() {
   return (
     <>
-      <HeroSection></HeroSection>
-      <CredibilitySection></CredibilitySection>
-      <GaleriaArvores></GaleriaArvores>
-      <AboutSection></AboutSection>
+      <div className="container mx-auto">
+        <HeroSection></HeroSection>
+        <CredibilitySection></CredibilitySection>
+        <GaleriaArvores></GaleriaArvores>
+        <AboutSection></AboutSection>
+      </div>
     </>
   );
 }
