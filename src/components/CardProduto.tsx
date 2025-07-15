@@ -112,7 +112,7 @@ const ProdutoCard = ({
       <motion.div
         layoutId={`card-produto-${id}`}
         onClick={onExpand}
-        className="w-[80%] h-[80%] bg-white rounded-lg overflow-hidden shadow-md cursor-pointer group flex flex-col"
+        className="w-full h-full bg-white rounded-lg overflow-hidden shadow-md cursor-pointer group flex flex-col"
       >
         <div className="relative w-full h-80">
           <Image
@@ -147,7 +147,7 @@ const ProdutoCard = ({
       <div className="fixed inset-0 z-[10001] p-0 flex items-center justify-center pointer-events-none">
         <motion.div
           layoutId={`card-produto-${id}`}
-          className="relative w-full h-full sm:w-[90%] sm:h-[85%] sm:max-w-6xl sm:max-h-[90vh] bg-white rounded-none sm:rounded-xl overflow-hidden flex flex-col sm:flex-row shadow-2xl pointer-events-auto"
+          className="relative  w-[80%] h-[80%] max-w-6xl max-h-[90vh] bg-white rounded-none sm:rounded-xl overflow-hidden flex flex-col sm:flex-row shadow-2xl pointer-events-auto"
         >
           <motion.button
             onClick={onExpand}
