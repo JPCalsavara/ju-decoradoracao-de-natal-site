@@ -1,7 +1,7 @@
 // src/components/ProdutoCard.tsx
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Arvore as Produto } from "@/services/arvoresData";
 
@@ -16,7 +16,7 @@ const ArrowButton = ({
   <motion.button
     onClick={(e) => {
       e.stopPropagation(); // Impede que o clique no botão feche o modal
-      onClick(e);
+      onClick();
     }}
     className="absolute top-1/2 -translate-y-1/2 bg-black/40 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-black/60 transition-colors z-20"
     style={direction === "left" ? { left: "1rem" } : { right: "1rem" }}
@@ -133,155 +133,176 @@ const ProdutoCard = ({
 
   // Versão do card expandido (modal com carrossel)
   return (
-    <motion.div
-      layoutId={`card-produto-${id}`}
-      custom={direction}
-      variants={variants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      transition={{
-        x: { type: "spring", stiffness: 300, damping: 30 },
-        opacity: { duration: 0.2 },
-      }}
-      drag="x"
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={1}
-      onDragEnd={(e, { offset, velocity }) => {
-        const swipe = Math.abs(offset.x) * velocity.x;
-        if (swipe < -10000 && onNext) {
-          onNext();
-        } else if (swipe > 10000 && onPrev) {
-          onPrev();
-        }
-      }}
-      className="fixed inset-0 z-[10001] p-0 flex items-center justify-center"
-    >
-      <div className="relative w-full h-auto lg:h-180 md:max-w-6xl md:max-h-[90vh] bg-white rounded-none md:rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
-        <motion.button
-          onClick={onExpand}
-          aria-label="Fechar"
-          className="absolute top-3 right-3 z-20 w-8 md:w-10 h-8 md:h-10 bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
-          whileHover={{ scale: 1.1, rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <svg
-            className="w-7 h-7"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </motion.button>
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onExpand}
+        className="fixed inset-0 bg-black/70 z-[10000]"
+      />
 
-        {/* Secção da Imagem */}
-        <div className="relative w-full md:w-1/2 h-96 md:h-auto">
-          <Image
-            src={imagemUrl}
-            alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
-            fill
-            className="object-cover"
+      {/* Botões de navegação agora ficam fora do card principal para não serem afetados pela animação de layout */}
+      <div className="fixed inset-0 z-[10001] flex items-center justify-center p-0">
+        {onPrev && (
+          <ArrowButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onPrev();
+            }}
+            direction="left"
           />
-        </div>
-
-        {/* Secção do Conteúdo */}
-        <div className="w-full md:w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
-          <div>
-            <span className="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
-              {tipo}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 pr-8">
-              {nome}
-            </h2>
-            <p className="text-md md:text-xl text-emerald-700 mt-1 mb-4">
-              {estilo}
-            </p>
-            <p className="text-slate-600 mb-6 md:text-lg">{descricao}</p>
-            <div className="space-y-4">
-              {tipo === "Árvore" && (
-                <div>
-                  <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
-                    Detalhes
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="text-sm md:text-md bg-slate-200 text-slate-700 px-3 py-1 rounded-full">
-                      📏 {altura}
-                    </span>
-                  </div>
-                </div>
-              )}
-              <div>
-                <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
-                  Cores Principais
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {cores.map((cor) => (
-                    <span
-                      key={cor}
-                      className="text-sm md:text-md bg-slate-200 text-slate-700 px-3 py-1 rounded-full"
-                    >
-                      {cor}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
-                  Enfeites em Destaque
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {enfeites.map((enfeite) => (
-                    <span
-                      key={enfeite}
-                      className="text-sm md:text-md bg-amber-100 text-amber-800 font-medium px-3 py-1 rounded-full"
-                    >
-                      {enfeite}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <motion.button
-              onClick={onOpenForm}
-              className="w-full mt-8 bg-red-700 text-white font-bold py-3 md:py-5 rounded-lg text-lg md:text-2xl shadow-lg hover:bg-red-800 transition-colors"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Solicitar Orçamento
-            </motion.button>
-          </div>
-        </div>
+        )}
+        {onNext && (
+          <ArrowButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onNext();
+            }}
+            direction="right"
+          />
+        )}
       </div>
 
-      {/* Botões de Navegação do Carrossel */}
-      {onPrev && (
-        <ArrowButton
-          onClick={(e) => {
-            e.stopPropagation();
-            onPrev();
-          }}
-          direction="left"
-        />
-      )}
-      {onNext && (
-        <ArrowButton
-          onClick={(e) => {
-            e.stopPropagation();
-            onNext();
-          }}
-          direction="right"
-        />
-      )}
-    </motion.div>
+      <div className="fixed inset-0 z-[10001] p-0 flex items-center justify-center pointer-events-none">
+        <motion.div
+          layoutId={`card-produto-${id}`}
+          className="relative w-full h-full md:w-[80%] md:h-[80%] md:max-w-6xl md:max-h-[90vh] bg-white rounded-none md:rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl pointer-events-auto"
+        >
+          <motion.button
+            onClick={onExpand}
+            aria-label="Fechar"
+            className="absolute top-3 right-3 z-20 w-8 md:w-10 h-8 md:h-10 bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg"
+            whileHover={{ scale: 1.1, rotate: 90 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <svg
+              className="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </motion.button>
+
+          {/* --- CORREÇÃO APLICADA AQUI --- */}
+          {/* O AnimatePresence agora envolve o conteúdo que muda (a imagem e o texto) */}
+          <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.div
+              key={id} // A chave no elemento animado é o que dispara a animação de entrada/saída
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.5}
+              onDragEnd={(e, { offset, velocity }) => {
+                const swipe = Math.abs(offset.x) * velocity.x;
+                if (swipe < -10000 && onNext) {
+                  onNext();
+                } else if (swipe > 10000 && onPrev) {
+                  onPrev();
+                }
+              }}
+              className="w-full h-full flex flex-col md:flex-row"
+            >
+              {/* Secção da Imagem */}
+              <div className="relative w-full md:w-1/2 h-96 md:h-auto flex-shrink-0">
+                <Image
+                  src={imagemUrl}
+                  alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+
+              {/* Secção do Conteúdo */}
+              <div className="w-full md:w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
+                <div>
+                  <span className="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
+                    {tipo}
+                  </span>
+                  <h2 className="text-3xl md:text-4xl font-bold text-slate-800 pr-8">
+                    {nome}
+                  </h2>
+                  <p className="text-md md:text-xl text-emerald-700 mt-1 mb-4">
+                    {estilo}
+                  </p>
+                  <p className="text-slate-600 mb-6 md:text-lg">{descricao}</p>
+                  <div className="space-y-4">
+                    {tipo === "Árvore" && (
+                      <div>
+                        <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
+                          Detalhes
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="text-sm md:text-md bg-slate-200 text-slate-700 px-3 py-1 rounded-full">
+                            📏 {altura}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
+                        Cores Principais
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {cores.map((cor) => (
+                          <span
+                            key={cor}
+                            className="text-sm md:text-md bg-slate-200 text-slate-700 px-3 py-1 rounded-full"
+                          >
+                            {cor}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
+                        Enfeites em Destaque
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {enfeites.map((enfeite) => (
+                          <span
+                            key={enfeite}
+                            className="text-sm md:text-md bg-amber-100 text-amber-800 font-medium px-3 py-1 rounded-full"
+                          >
+                            {enfeite}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <motion.button
+                    onClick={onOpenForm}
+                    className="w-full mt-8 bg-red-700 text-white font-bold py-3 md:py-5 rounded-lg text-lg md:text-2xl shadow-lg hover:bg-red-800 transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Solicitar Orçamento
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+      </div>
+    </>
   );
 };
 
