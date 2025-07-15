@@ -133,7 +133,7 @@ export default function GaleriaCompletaPage() {
 
   // --- LÓGICA DA PAGINAÇÃO ---
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 12; // Define quantos itens por página (ajuste conforme necessário)
+  const ITEMS_PER_PAGE = 20; // Define quantos itens por página
 
   const paginatedProdutos = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -159,38 +159,41 @@ export default function GaleriaCompletaPage() {
   };
 
   // --- Lógica dos modais e carrossel ---
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [direction, setDirection] = useState(0);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const handleSelectProduto = (produto: Produto) => {
-    const index = filteredProdutos.findIndex((p) => p.id === produto.id);
     setDirection(0);
-    setCurrentIndex(index);
+    setSelectedId(produto.id);
   };
-  const handleCloseProduto = () => setCurrentIndex(null);
+  const handleCloseProduto = () => setSelectedId(null);
   const handleOpenForm = () => setIsFormOpen(true);
   const handleCloseForm = () => {
     setIsFormOpen(false);
   };
 
   const handleNextProduto = () => {
-    if (currentIndex === null) return;
+    if (selectedId === null) return;
+    const currentIndex = filteredProdutos.findIndex((p) => p.id === selectedId);
     setDirection(1);
-    setCurrentIndex((prevIndex) => (prevIndex! + 1) % filteredProdutos.length);
+    const nextIndex = (currentIndex + 1) % filteredProdutos.length;
+    setSelectedId(filteredProdutos[nextIndex].id);
   };
 
   const handlePrevProduto = () => {
-    if (currentIndex === null) return;
+    if (selectedId === null) return;
+    const currentIndex = filteredProdutos.findIndex((p) => p.id === selectedId);
     setDirection(-1);
-    setCurrentIndex(
-      (prevIndex) =>
-        (prevIndex! - 1 + filteredProdutos.length) % filteredProdutos.length
-    );
+    const prevIndex =
+      (currentIndex - 1 + filteredProdutos.length) % filteredProdutos.length;
+    setSelectedId(filteredProdutos[prevIndex].id);
   };
 
-  const selectedProduto =
-    currentIndex !== null ? filteredProdutos[currentIndex] : null;
+  const selectedProduto = useMemo(() => {
+    if (selectedId === null) return null;
+    return filteredProdutos.find((p) => p.id === selectedId) || null;
+  }, [selectedId, filteredProdutos]);
 
   if (loading) {
     return <div className="text-center py-20">A carregar...</div>;
@@ -269,13 +272,11 @@ export default function GaleriaCompletaPage() {
             />
             <ProdutoCard
               isExpanded
-              key={currentIndex}
+              key={selectedProduto.id}
               produto={selectedProduto}
               direction={direction}
               onExpand={handleCloseProduto}
               onOpenForm={handleOpenForm}
-              currentIndex={currentIndex!}
-              totalItems={filteredProdutos.length}
             />
           </>
         )}
