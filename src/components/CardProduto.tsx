@@ -18,7 +18,7 @@ const ArrowButton = ({
       e.stopPropagation();
       onClick(e);
     }}
-    className="absolute top-1/2 -translate-y-1/2 bg-red-700 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-800 transition-colors z-10"
+    className="absolute top-1/2 -translate-y-1/2 bg-red-700 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-800 transition z-10"
     style={direction === "left" ? { left: "0.5rem" } : { right: "0.5rem" }}
     whileTap={{ scale: 0.9 }}
     whileHover={{ scale: 1.1 }}
@@ -112,7 +112,7 @@ const ProdutoCard = ({
       <motion.div
         layoutId={`card-produto-${id}`}
         onClick={onExpand}
-        className="w-full h-full bg-white rounded-lg overflow-hidden shadow-md cursor-pointer group flex flex-col"
+        className="w-[80%] h-[80%] bg-white rounded-lg overflow-hidden shadow-md cursor-pointer group flex flex-col"
       >
         <div className="relative w-full h-80">
           <Image
