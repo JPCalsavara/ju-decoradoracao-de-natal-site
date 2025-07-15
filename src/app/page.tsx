@@ -6,7 +6,7 @@ import HeroSection from "@/components/HeroSection";
 export default function Home() {
   return (
     <>
-      <div className="container mx-auto">
+      <div className="container mx-auto max-w-screen">
         <HeroSection></HeroSection>
         <CredibilitySection></CredibilitySection>
         <GaleriaArvores></GaleriaArvores>
