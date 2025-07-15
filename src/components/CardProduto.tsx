@@ -9,19 +9,22 @@ import { Arvore as Produto } from "@/services/arvoresData";
 const ArrowButton = ({
   onClick,
   direction,
+  disabled = false,
 }: {
   onClick: () => void;
   direction: "left" | "right";
+  disabled?: boolean;
 }) => (
   <motion.button
     onClick={(e) => {
-      e.stopPropagation(); // Impede que o clique no botão feche o modal
+      e.stopPropagation();
       onClick();
     }}
-    className="absolute top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-black/50 transition-colors z-10"
+    className="absolute top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-black/50 transition-colors z-10 disabled:opacity-30 disabled:cursor-not-allowed"
     style={direction === "left" ? { left: "1rem" } : { right: "1rem" }}
     whileTap={{ scale: 0.9 }}
     whileHover={{ scale: 1.1 }}
+    disabled={disabled}
   >
     {direction === "left" ? (
       <svg
@@ -126,9 +129,12 @@ const ProdutoCard = ({
         className="fixed inset-0 bg-black/70 z-[10000]"
       />
       <div className="fixed inset-0 flex items-center justify-center z-[10001] p-2 md:p-4">
+        {onPrev && <ArrowButton onClick={onPrev} direction="left" />}
+        {onNext && <ArrowButton onClick={onNext} direction="right" />}
+
         <motion.div
           layoutId={`card-produto-${id}`}
-          className="relative w-[90%] max-w-md md:max-w-4xl lg:max-w-6xl max-h-[90vh] lg:h-200 bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
+          className="relative w-[90%] max-w-md md:max-w-4xl lg:max-w-6xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col md:flex-row shadow-2xl"
         >
           <motion.button
             onClick={onExpand}
@@ -153,13 +159,13 @@ const ProdutoCard = ({
             </svg>
           </motion.button>
           <div className="relative w-full md:w-1/2 h-96 md:h-auto">
-            <AnimatePresence initial={false}>
+            <AnimatePresence mode="wait">
               <motion.div
-                key={id} // A chave garante que a animação ocorra quando o produto muda
+                key={id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2 }}
                 className="w-full h-full"
               >
                 <Image
@@ -171,17 +177,13 @@ const ProdutoCard = ({
               </motion.div>
             </AnimatePresence>
 
-            {/* Botões de Navegação */}
-            {onPrev && <ArrowButton onClick={onPrev} direction="left" />}
-            {onNext && <ArrowButton onClick={onNext} direction="right" />}
-
-            {/* Contador de Itens */}
-            {currentIndex && totalItems && (
-              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs font-bold px-3 py-1 rounded-full">
+            {currentIndex !== undefined && totalItems !== undefined && (
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs font-bold px-3 py-1 rounded-full">
                 {currentIndex} / {totalItems}
               </div>
             )}
           </div>
+          {/* --- CONTEÚDO COMPLETO ADICIONADO AQUI --- */}
           <div className="w-full md:w-1/2 p-6 md:p-6 overflow-y-auto flex flex-col justify-between">
             <div>
               <span className="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
