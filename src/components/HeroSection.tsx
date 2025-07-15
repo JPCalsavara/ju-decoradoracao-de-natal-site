@@ -88,7 +88,7 @@ const HeroSection = () => {
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Conheça Nossos Trajetoria
+                Conheça Nossa Trajetória
               </motion.button>
             </Link>
           </motion.div>

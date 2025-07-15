@@ -175,7 +175,7 @@ const EnfeiteCheckboxSelector = ({
     "Brilho",
     "Veludo",
     "Borboleta",
-    "Bolas Gigante",
+    "Bola Gigante",
   ];
   const handleCheckboxChange = (enfeite: string) => {
     onEnfeiteChange(

@@ -73,7 +73,7 @@ export function ContactSection() {
               Vamos dar vida ao seu Natal?
             </h2>
             <p className="mt-3 max-w-2xl mx-auto text-lg text-slate-600">
-              Tem uma ideia em mente ou precisa de ajuda para começar? Preencha
+              Tem uma idéia em mente ou precisa de ajuda para começar? Preencha
               o formulário abaixo ou entre em contacto pelas nossas redes.
             </p>
           </div>

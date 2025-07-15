@@ -45,13 +45,15 @@ export function AboutSection() {
               <p>
                 Meu nome é Juliane Calsavara, sou mãe, empresaria, cristã e
                 amante do Natal. Formada em Admnistração pela UNIMEP e dona da
-                Arcó-Iris por 23 anos, loja de brinquedos, papelaria e natal.
+                Arco-Íris por 23 anos, loja de brinquedos, papelaria e natal.
               </p>
               <p>
-                Desde pequena sempre amou o natal, mas foi trabalhando como
-                vendedora de roupas que começou a fazer os primeiros laços e
-                vendendo que surgiu a loja Arcó-Iris e sua primeria montagem que
-                nunca parou desde então.
+                Desde pequena sempre amei o Natal, mas foi trabalhando como
+                vendedora de roupas que comecei a fazer os primeiros laços e
+                vendendo que surgiu a loja Arco-Íris e minha primeira montagem e
+                nunca mais parei. Em 2025 com muita alegria e amor estou fazendo
+                32 anos de montagens, com muita fé em DEUS! Espero te encontrar,
+                beijos da Ju
               </p>
             </div>
 
