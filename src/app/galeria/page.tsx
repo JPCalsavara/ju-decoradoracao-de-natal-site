@@ -1,10 +1,7 @@
-// ==================================================================
-// ARQUIVO: src/app/galeria-completa/page.tsx
-// Página atualizada para gerir a navegação entre produtos no modal.
-// ==================================================================
+// src/app/galeria/page.tsx
 "use client";
 
-import { useState, useMemo } from "react"; // 1. useEffect removido, pois não era utilizado.
+import { useState, useMemo, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useProdutos } from "@/hooks/useProdutos";
 import ProdutoCard from "@/components/CardProduto";
@@ -12,8 +9,8 @@ import { OrcamentoForm } from "@/components/OrcamentoForm";
 import { Arvore as Produto } from "@/services/arvoresData";
 import FilterControls from "@/components/FilterControls";
 
-// --- Componente Auxiliar para os Botões de Seta ---
-const ArrowButton = ({
+// --- Componente Auxiliar para os Botões de Seta do Carrossel ---
+const CarouselArrowButton = ({
   onClick,
   direction,
 }: {
@@ -64,10 +61,49 @@ const ArrowButton = ({
   </motion.button>
 );
 
+// --- NOVO Componente para os Controles de Paginação ---
+const PaginationControls = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) => {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="mt-12 flex items-center justify-center gap-4">
+      <motion.button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-red-800 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Anterior
+      </motion.button>
+      <span className="text-slate-700 font-medium">
+        Página {currentPage} de {totalPages}
+      </span>
+      <motion.button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-red-800 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Próxima
+      </motion.button>
+    </div>
+  );
+};
+
 export default function GaleriaCompletaPage() {
   const { produtos, loading, error } = useProdutos();
 
-  // --- Lógica do Filtro em Cascata (sem alterações) ---
+  // --- Lógica do Filtro (sem alterações) ---
   const [selectedFilters, setSelectedFilters] = useState({
     tipo: "",
     altura: "",
@@ -94,6 +130,24 @@ export default function GaleriaCompletaPage() {
       return matchTipo && matchAltura && matchEstilo && matchCor;
     });
   }, [produtos, selectedFilters]);
+
+  // --- LÓGICA DA PAGINAÇÃO ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12; // Define quantos itens por página (ajuste conforme necessário)
+
+  const paginatedProdutos = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return filteredProdutos.slice(startIndex, endIndex);
+  }, [filteredProdutos, currentPage]);
+
+  const totalPages = Math.ceil(filteredProdutos.length / ITEMS_PER_PAGE);
+
+  // Reseta para a primeira página sempre que os filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedFilters]);
+
   const handleFilterChange = (
     category: keyof typeof selectedFilters,
     value: string
@@ -104,12 +158,14 @@ export default function GaleriaCompletaPage() {
     }));
   };
 
-  // --- Lógica dos modais e navegação ---
+  // --- Lógica dos modais e carrossel ---
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState(0);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const handleSelectProduto = (produto: Produto) => {
     const index = filteredProdutos.findIndex((p) => p.id === produto.id);
+    setDirection(0);
     setCurrentIndex(index);
   };
   const handleCloseProduto = () => setCurrentIndex(null);
@@ -120,15 +176,17 @@ export default function GaleriaCompletaPage() {
 
   const handleNextProduto = () => {
     if (currentIndex === null) return;
-    const nextIndex = (currentIndex + 1) % filteredProdutos.length;
-    setCurrentIndex(nextIndex);
+    setDirection(1);
+    setCurrentIndex((prevIndex) => (prevIndex! + 1) % filteredProdutos.length);
   };
 
   const handlePrevProduto = () => {
     if (currentIndex === null) return;
-    const prevIndex =
-      (currentIndex - 1 + filteredProdutos.length) % filteredProdutos.length;
-    setCurrentIndex(prevIndex);
+    setDirection(-1);
+    setCurrentIndex(
+      (prevIndex) =>
+        (prevIndex! - 1 + filteredProdutos.length) % filteredProdutos.length
+    );
   };
 
   const selectedProduto =
@@ -160,25 +218,39 @@ export default function GaleriaCompletaPage() {
 
       <motion.div
         layout
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 min-h-[500px]"
       >
         <AnimatePresence>
-          {filteredProdutos.map((produto) => (
-            <motion.div
-              key={produto.id}
-              layout
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <ProdutoCard
-                produto={produto}
-                onExpand={() => handleSelectProduto(produto)}
-              />
-            </motion.div>
-          ))}
+          {paginatedProdutos.length > 0 ? (
+            paginatedProdutos.map((produto) => (
+              <motion.div
+                key={produto.id}
+                layout
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <ProdutoCard
+                  produto={produto}
+                  onExpand={() => handleSelectProduto(produto)}
+                />
+              </motion.div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-slate-600 text-lg">
+                Nenhum produto encontrado com os filtros selecionados.
+              </p>
+            </div>
+          )}
         </AnimatePresence>
       </motion.div>
+
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       <AnimatePresence>
         {selectedProduto && (
@@ -190,16 +262,16 @@ export default function GaleriaCompletaPage() {
               onClick={handleCloseProduto}
               className="fixed inset-0 bg-black/70 z-[10000]"
             />
-            {/* 2. O onClick agora passa uma função que corresponde à assinatura esperada */}
-            <ArrowButton onClick={() => handlePrevProduto()} direction="left" />
-            <ArrowButton
-              onClick={() => handleNextProduto()}
+            <CarouselArrowButton onClick={handlePrevProduto} direction="left" />
+            <CarouselArrowButton
+              onClick={handleNextProduto}
               direction="right"
             />
             <ProdutoCard
               isExpanded
               key={currentIndex}
               produto={selectedProduto}
+              direction={direction}
               onExpand={handleCloseProduto}
               onOpenForm={handleOpenForm}
               currentIndex={currentIndex!}
