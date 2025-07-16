@@ -146,7 +146,7 @@ const ProdutoCard = ({
       <div className="fixed inset-0 z-[10001] p-0 flex items-center justify-center pointer-events-none">
         <motion.div
           layoutId={`card-produto-${id}`}
-          className="relative w-full h-full sm:w-[90%] sm:h-[85%] sm:max-w-6xl sm:max-h-[90vh] bg-white rounded-none sm:rounded-xl overflow-hidden flex flex-col sm:flex-row shadow-2xl pointer-events-auto"
+          className="relative lg:w-full lg:h-full w-[90%] h-[85%] max-w-6xl max-h-[90vh] bg-white  rounded-xl overflow-hidden flex flex-col lg:flex-row shadow-2xl pointer-events-auto"
         >
           <motion.button
             onClick={onExpand}
@@ -194,10 +194,10 @@ const ProdutoCard = ({
                   onPrev();
                 }
               }}
-              className="w-full h-full flex flex-col sm:flex-row"
+              className="w-full h-full flex flex-col lg:flex-row"
             >
               {/* --- CORREÇÃO APLICADA AQUI --- */}
-              <div className="relative w-full sm:w-1/2 h-1/2 sm:h-full flex-shrink-0">
+              <div className="relative w-full lg:w-1/2 h-1/2 lg:h-full flex-shrink-0">
                 <Image
                   src={imagemUrl}
                   alt={`Foto de ${tipo.toLowerCase()} ${nome}`}
@@ -214,7 +214,7 @@ const ProdutoCard = ({
                   )}
                 </div>
               </div>
-              <div className="w-full sm:w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
+              <div className="w-full lg:w-1/2 p-6 overflow-y-auto flex flex-col justify-between">
                 <div>
                   <span className="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
                     {tipo}
