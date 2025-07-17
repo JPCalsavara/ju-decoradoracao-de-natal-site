@@ -80,13 +80,12 @@ export const useOrcamentoForm = () => {
           tipo,
           tipo_de_servico: tipoDeServico,
           titulo,
-          possui_arvore: temArvoreTexto,
+          possui_produto: temArvoreTexto,
+          estilo_inspiracao: estiloInspiracao,
           cores_bolas: finalCorBolas,
           cores_lacos: finalCorLacos,
-          // --- CORREÇÃO APLICADA AQUI ---
-          // Enviamos o array 'enfeites' diretamente, sem o .join()
           enfeites: enfeites,
-          estilo_inspiracao: estiloInspiracao,
+          tamanhoArvore,
         },
       ]);
 
