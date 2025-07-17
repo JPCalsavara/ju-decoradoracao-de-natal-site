@@ -9,7 +9,7 @@ import Link from "next/link";
 const NavBar = () => {
   const navTopics: [string, string][] = [
     ["Início", "/"],
-    ["Árvores", "/galeria"],
+    ["Galeria", "/galeria"],
     ["Contato", "#contato"],
   ];
   const [open, setOpen] = useState(false);
@@ -78,10 +78,11 @@ const NavBar = () => {
             >
               {/* --- CORREÇÃO 2: Link Consistente --- */}
               {/* Usando legacyBehavior e <a> para consistência com o menu mobile. */}
-              <Link href={href} legacyBehavior>
-                <a className="text-slate-700 hover:text-red-700 font-medium duration-300">
-                  {label}
-                </a>
+              <Link
+                href={href}
+                className="text-slate-700 hover:text-red-700 font-medium duration-300"
+              >
+                {label}
               </Link>
             </motion.li>
           ))}
