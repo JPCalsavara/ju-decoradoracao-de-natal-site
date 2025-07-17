@@ -16,7 +16,15 @@ export function GaleriaArvores() {
   const { produtos, loading, error } = useProdutos();
 
   // Cria a lista de prévia apenas com os 4 primeiros produtos carregados
-  const arvoresPreview = useMemo(() => produtos.slice(0, 4), [produtos]);
+  const arvoresPreview = useMemo(
+    () => produtos.filter((p) => p.tipo === "Árvore").slice(0, 4),
+    [produtos]
+  );
+
+  const guirlandasPreview = useMemo(
+    () => produtos.filter((p) => p.tipo === "Guirlanda").slice(0, 4),
+    [produtos]
+  );
 
   // Lógica dos modais (sem alterações)
   const [selectedTree, setSelectedTree] = useState<Arvore | null>(null);
@@ -58,8 +66,18 @@ export function GaleriaArvores() {
       {!loading && !error && (
         <>
           {/* Grid com a prévia dos Cards */}
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:pb-8">
             {arvoresPreview.map((arvore) => (
+              <CardArvore
+                key={arvore.id}
+                produto={arvore}
+                onExpand={() => handleSelectTree(arvore)}
+              />
+            ))}
+          </div>
+
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {guirlandasPreview.map((arvore) => (
               <CardArvore
                 key={arvore.id}
                 produto={arvore}
@@ -76,7 +94,7 @@ export function GaleriaArvores() {
                delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105
                transition "
             >
-              Ver Todas as Árvores
+              Ver Todos as Criações
             </Link>
           </div>
         </>
