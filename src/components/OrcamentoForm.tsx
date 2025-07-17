@@ -180,7 +180,7 @@ const EnfeiteCheckboxSelector = ({
     "Veludo",
     "Borboleta",
     "Bola Gigante",
-    "Cereija",
+    "Cereja",
     "Pelucia",
   ];
   const handleCheckboxChange = (enfeite: string) => {
@@ -233,11 +233,12 @@ export function OrcamentoForm({
   const [dataNascimento, setDataNascimento] = useState("");
   const [estadoSelecionado, setEstadoSelecionado] = useState("");
   const [cidadeSelecionada, setCidadeSelecionada] = useState("");
+  const [tipo, setTipo] = useState(arvore.tipo);
   const [temArvore, setTemArvore] = useState<"nao" | "sim">("nao");
   const [tamanhoArvore, setTamanhoArvore] = useState(arvore.altura || "1.80m");
   const [coresBolas, setCoresBolas] = useState<string[]>(arvore.cores || []);
   const [coresLacos, setCoresLacos] = useState<string[]>(arvore.cores || []);
-  const [estilos, setEstilos] = useState<string[]>([arvore.estilo]);
+  const [estilo, setEstilo] = useState<string[]>([arvore.estilo]);
   const [enfeites, setEnfeites] = useState<string[]>(arvore.enfeites || []);
   const [successUrl, setSuccessUrl] = useState<string | null>(null);
 
@@ -257,6 +258,7 @@ export function OrcamentoForm({
       dataNascimento,
       cidade: cidadeSelecionada,
       estado: nomeEstado,
+      tipo,
       tipoDeServico: "Inspirada",
       titulo: arvore.nome, // O título é definido diretamente pelo nome da árvore
       temArvore,
@@ -264,7 +266,7 @@ export function OrcamentoForm({
       coresBolas,
       coresLacos,
       enfeites,
-      estilos,
+      estilo,
       arvore,
     });
 
@@ -428,7 +430,38 @@ export function OrcamentoForm({
             </div>
             <div>
               <label className="font-medium text-slate-700 md:text-lg">
-                Já tem a árvore?
+                Quer árvore ou guirlanda?
+              </label>
+              <div className="flex gap-6 mt-2">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="tipo"
+                    value="Árvore"
+                    checked={tipo === "Árvore"}
+                    onChange={() => setTipo("Árvore")}
+                    className="mr-2 h-4 w-4 text-red-600"
+                  />
+                  <span className="md:text-lg">Árvore</span>
+                </label>
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="tipo"
+                    value="Guirlanda"
+                    checked={tipo === "Guirlanda"}
+                    onChange={() => setTipo("Guirlanda")}
+                    className="mr-2 h-4 w-4 text-red-600"
+                  />
+                  <span className="md:text-lg">Guirlanda</span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <label className="font-medium text-slate-700 md:text-lg">
+                {tipo === "Árvore"
+                  ? "Você já tem árvore?"
+                  : "Você já tem guirlanda?"}
               </label>
               <div className="flex gap-6 mt-2">
                 <label className="flex items-center cursor-pointer">
@@ -457,9 +490,13 @@ export function OrcamentoForm({
             </div>
             <div>
               <label className="font-medium text-slate-700 md:text-lg">
-                {temArvore === "sim"
-                  ? "Qual a altura dela?"
-                  : "Qual altura de árvore você deseja?"}
+                {tipo === "Árvore"
+                  ? temArvore === "sim"
+                    ? "Qual a altura dela?"
+                    : "Qual altura de árvore você deseja?"
+                  : temArvore === "sim"
+                  ? "Qual a circuferência dela?"
+                  : "Qual circuferência da guirlanda você deseja?"}
               </label>
               <SizeSelector
                 selectedSize={tamanhoArvore}
@@ -467,8 +504,8 @@ export function OrcamentoForm({
               />
             </div>
             <StyleCheckboxSelector
-              selectedStyles={estilos}
-              onStyleChange={setEstilos}
+              selectedStyles={estilo}
+              onStyleChange={setEstilo}
             />
             <ColorCheckboxSelector
               title="Cores desejadas para as bolas"
