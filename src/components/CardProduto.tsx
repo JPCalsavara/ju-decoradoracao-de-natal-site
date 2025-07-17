@@ -120,7 +120,7 @@ const ProdutoCard = ({
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <span className="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+          <span className="absolute top-2 right-2 bg-red-700 bg-opacity-60 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
             {tipo}
           </span>
         </div>

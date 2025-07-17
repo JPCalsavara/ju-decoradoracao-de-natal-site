@@ -11,6 +11,7 @@ export interface OrcamentoFormData {
   dataNascimento?: string;
   cidade: string;
   estado: string;
+  tipo: string;
   tipoDeServico: string;
   titulo: string;
   temArvore: "nao" | "sim";
@@ -19,7 +20,7 @@ export interface OrcamentoFormData {
   coresLacos: string[];
   enfeites: string[];
   arvore?: Arvore;
-  estilos?: string[];
+  estilo?: string[];
 }
 
 // Criação do cliente Supabase
@@ -44,6 +45,7 @@ export const useOrcamentoForm = () => {
         dataNascimento,
         cidade,
         estado,
+        tipo,
         tipoDeServico,
         titulo,
         temArvore,
@@ -52,7 +54,7 @@ export const useOrcamentoForm = () => {
         coresLacos,
         enfeites,
         arvore,
-        estilos,
+        estilo,
       } = formData;
 
       // Formatação dos dados para colunas de texto
@@ -62,11 +64,11 @@ export const useOrcamentoForm = () => {
         coresLacos.length > 0 ? coresLacos.join(", ") : "A definir";
       const temArvoreTexto =
         temArvore === "sim" ? `Sim, tamanho de ${tamanhoArvore}` : "Não";
-      const estilosSelecionados =
-        estilos && estilos.length > 0 ? estilos.join(", ") : "Não especificado";
+      const estiloSelecionado =
+        estilo && estilo.length > 0 ? estilo.join(", ") : "Não especificado";
       const estiloInspiracao = arvore
-        ? `${arvore.nome} (${arvore.estilo})`
-        : estilosSelecionados;
+        ? `${titulo} (${estilo})`
+        : estiloSelecionado;
 
       // 1. Salva os dados no Supabase
       const { error } = await supabase.from("Orcamentos").insert([
@@ -75,6 +77,7 @@ export const useOrcamentoForm = () => {
           data_nascimento: dataNascimento || null,
           cidade,
           estado,
+          tipo,
           tipo_de_servico: tipoDeServico,
           titulo,
           possui_arvore: temArvoreTexto,
@@ -105,10 +108,11 @@ export const useOrcamentoForm = () => {
         messageStart +
         `*Nome:* ${nome}\n` +
         `*Localização:* ${cidade}, ${estado}\n\n` +
+        `*Qual produto?:* ${tipo}\n` +
         (arvore
-          ? `*Inspiração:* ${arvore.nome}\n`
-          : `*Estilos Desejados:* ${estiloInspiracao}\n`) +
-        `*Já possui árvore?* ${temArvoreTexto}\n` +
+          ? `*Inspiração:* ${titulo}\n`
+          : `*estilo Desejados:* ${estiloInspiracao}\n`) +
+        `*Já possui produto?* ${temArvoreTexto}\n` +
         `*Cores para Bolas:* ${finalCorBolas}\n` +
         `*Cores para Laços:* ${finalCorLacos}\n` +
         `*Enfeites:* ${finalEnfeitesString}\n\n` +
