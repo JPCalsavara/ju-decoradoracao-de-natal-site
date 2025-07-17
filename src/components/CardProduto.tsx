@@ -227,10 +227,10 @@ const ProdutoCard = ({
                   </p>
                   <p className="text-slate-600 mb-6 md:text-lg">{descricao}</p>
                   <div className="space-y-4">
-                    {tipo === "Árvore" && (
+                    
                       <div>
                         <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
-                          Detalhes
+                          {tipo === "Árvore" ? "Altura" : "Diâmetro"
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           <span className="text-sm md:text-md bg-slate-200 text-slate-700 px-3 py-1 rounded-full">
@@ -238,7 +238,7 @@ const ProdutoCard = ({
                           </span>
                         </div>
                       </div>
-                    )}
+                   
                     <div>
                       <h4 className="text-sm md:text-lg font-bold text-slate-500 uppercase mb-2">
                         Cores Principais
