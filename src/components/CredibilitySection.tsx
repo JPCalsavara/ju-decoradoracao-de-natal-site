@@ -217,10 +217,11 @@ const ImageIcon = () => (
     />
   </svg>
 );
-const RecycleIcon = () => (
+
+const RevitalizeIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    className="h-10 w-10"
+    className="h-10 w-10" // Mantém o mesmo tamanho para consistência
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -229,7 +230,7 @@ const RecycleIcon = () => (
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M4 4v5h5M5.222 9.222a8.963 8.963 0 0112.556 0M19 20v-5h-5m-1.222-4.222a8.963 8.963 0 01-12.556 0"
+      d="M21 12a9 9 0 11-9-9c2.5 0 4.7.9 6.4 2.3l-1.4 1.4A7 7 0 1019 12h2z"
     />
   </svg>
 );
@@ -336,7 +337,7 @@ export function CredibilitySection() {
               href="#arvores"
             />
             <ProcessItem
-              icon={<RecycleIcon />}
+              icon={<RevitalizeIcon />}
               title="Revitalizar"
               description="Tem enfeites de valor sentimental? Nós integramos as suas peças existentes com novos elementos para criar uma decoração renovada, cheia de significado."
               href="#contato"
