@@ -5,7 +5,7 @@
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-800 text-slate-300">
+    <footer className="w-full bg-slate-800 text-slate-300">
       <div className="container mx-auto px-6 ">
         {/* <div className="flex flex-col md:flex-row md:justify-around gap-8 text-center md:text-left">
           
