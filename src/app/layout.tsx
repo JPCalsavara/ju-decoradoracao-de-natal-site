@@ -16,13 +16,14 @@ const inter = Inter({
 // --- METADADOS OTIMIZADOS PARA SEO ---
 export const metadata: Metadata = {
   // Título mais descritivo com palavras-chave
-  title:
-    "Ju Decoração de Natal | Decoração Personalizada em Sorocaba, Campinas e SP",
+  title: "Ju Decoração de Natal",
   // Descrição mais convidativa e rica em palavras-chave
   description:
-    "Especialista em decoração de Natal com 32 anos de experiência. Transformamos o seu lar ou empresa com projetos únicos e artesanais em Sorocaba, Campinas e São Paulo.",
+    "Especialista em decoração de Natal com 32 anos de experiência. Transformamos o seu lar ou empresa com projetos únicos e artesanais em nas regiões de Sorocaba, Campinas e São Paulo.",
   // Palavras-chave relevantes para o seu negócio
   keywords: [
+    "ju decoracao de natal",
+    "ju decoração de natal",
     "decoração de natal",
     "decoradora de natal",
     "árvore de natal",
@@ -49,14 +50,15 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: "https://www.ju-decoracao-de-natal.com.br",
     siteName: "Ju Decoração de Natal",
-    // images: [ // Adicione uma imagem de pré-visualização para compartilhamento
-    //   {
-    //     url: "https://www.seudominio.com.br/og-image.jpg", // URL da sua imagem
-    //     width: 1200,
-    //     height: 630,
-    //     alt: "Árvore de Natal elegantemente decorada por Ju Decoração de Natal",
-    //   }
-    // ]
+    images: [
+      // Adicione uma imagem de pré-visualização para compartilhamento
+      {
+        url: "https://i.pinimg.com/736x/e6/42/cc/e642ccd918ed67e8f7ab7745083daa4e.jpg", // URL da sua imagem
+        width: 1200,
+        height: 630,
+        alt: "Logo ",
+      },
+    ],
   },
 };
 
