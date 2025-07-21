@@ -145,7 +145,7 @@ const ProdutoCard = ({
       <div className="fixed inset-0 z-[10001] p-0 flex items-center justify-center pointer-events-none">
         <motion.div
           layoutId={`card-produto-${id}`}
-          className="relative w-[90%] h-[85%] max-w-6xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col lg:flex-row shadow-2xl pointer-events-auto"
+          className="relative w-[90%] h-[88%] max-w-6xl max-h-[90vh] bg-white rounded-xl overflow-hidden flex flex-col lg:flex-row shadow-2xl pointer-events-auto"
         >
           <motion.button
             onClick={onExpand}
