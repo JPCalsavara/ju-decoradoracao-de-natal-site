@@ -1,49 +1,60 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // Trocado para Inter, uma fonte mais versátil e legível
+import { Inter } from "next/font/google";
 import "./globals.css";
 
 // Importando os componentes de layout
 import NavBar from "@/components/NavBar";
-import { ContactSection } from "@/components/ContactSection";
-import Footer from "@/components/Footer";
-
-import { Analytics } from "@vercel/analytics/next";
+import Footer from "@/components/Footer"; // Usando um componente de Rodapé genérico
 
 // Configuração da fonte Inter
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans", // Define a variável CSS para a fonte
+  variable: "--font-sans",
 });
 
-// Metadados aprimorados para melhor SEO e compartilhamento social
+// --- METADADOS OTIMIZADOS PARA SEO ---
 export const metadata: Metadata = {
-  title: "Ju Decoração de Natal",
+  // Título mais descritivo com palavras-chave
+  title:
+    "Ju Decoração de Natal | Decoração Personalizada em Sorocaba, Campinas e SP",
+  // Descrição mais convidativa e rica em palavras-chave
   description:
-    "Especialista em decoração de Natal com 32 anos de experiência. Transformamos seu lar ou empresa com projetos únicos em Sorocaba, Campinas e São Paulo.",
+    "Especialista em decoração de Natal com 32 anos de experiência. Transformamos o seu lar ou empresa com projetos únicos e artesanais em Sorocaba, Campinas e São Paulo.",
+  // Palavras-chave relevantes para o seu negócio
   keywords: [
     "decoração de natal",
-    "decoradora",
+    "decoradora de natal",
     "árvore de natal",
+    "guirlanda",
     "sorocaba",
     "campinas",
     "são paulo",
     "decoração personalizada",
+    "decoração artesanal",
+    "porto feliz",
+    "itu",
+    "tatui",
+    "boituva",
+    "desmontagem de natal",
   ],
+
+  // Configuração para compartilhamento em redes sociais (WhatsApp, Instagram, etc.)
   openGraph: {
-    title: "Ju Decoração de Natal | Projetos Exclusivos",
+    title:
+      "Ju Decoração de Natal | Montagem e desmontagem de árvores e guirlandas de Natal",
     description:
-      "Leve a magia do Natal para seu espaço com decorações personalizadas e cheias de afeto.",
+      "Leve a magia do Natal para o seu espaço com decorações personalizadas e cheias de afeto.",
     type: "website",
     locale: "pt_BR",
-    url: "https://www.ju-decoracao-de-natal.com.br", // Descomente e adicione seu domínio quando tiver um
+    url: "https://www.ju-decoracao-de-natal.com.br",
     siteName: "Ju Decoração de Natal",
-    // images: [ // Adicione uma imagem para compartilhamento
+    // images: [ // Adicione uma imagem de pré-visualização para compartilhamento
     //   {
-    //     url: "https://www.seudominio.com.br/og-image.jpg",
+    //     url: "https://www.seudominio.com.br/og-image.jpg", // URL da sua imagem
     //     width: 1200,
     //     height: 630,
-    //     alt: "Árvore de Natal decorada por Ju Decoração de Natal",
+    //     alt: "Árvore de Natal elegantemente decorada por Ju Decoração de Natal",
     //   }
     // ]
   },
@@ -55,21 +66,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // Idioma alterado para Português do Brasil
-    <html lang="en">
+    // Idioma definido para Português do Brasil
+    <html lang="pt-BR">
       <body
-        className={`${inter.variable} font-[var(--font-sans)] bg-slate-50 text-slate-800 antialiased z-[10000] w-full`}
+        className={`${inter.variable} font-sans bg-slate-50 text-slate-800 antialiased`}
       >
-        {/* Componente NavBar renderizado em todas as páginas */}
+        {/* Estrutura semântica com <header>, <main> e <footer> */}
         <NavBar />
-
-        {/* O 'main' envolve o conteúdo principal de cada página */}
         <main>{children}</main>
-
-        {/* Componente Footer renderizado em todas as páginas */}
-        <ContactSection />
-        <Footer></Footer>
-        <Analytics />
+        <Footer />
       </body>
     </html>
   );
