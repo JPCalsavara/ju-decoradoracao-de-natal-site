@@ -104,26 +104,27 @@ const ProcessItem = ({
           {/* --- CORREÇÃO APLICADA ---
             O Link agora é um botão estilizado que muda de aparência entre mobile e desktop.
           */}
-          <Link href={href} legacyBehavior>
-            <a className="mt-6 inline-flex items-center justify-center px-5 py-2 rounded-full font-bold text-white bg-red-700 transition-all duration-300 md:bg-transparent md:text-red-700 md:group-hover:bg-red-700 md:group-hover:text-white md:border-2 md:border-red-700">
-              <span className="mr-2">Clique Para Saber Mais</span>
-              <div className="animate-shake md:animate-none md:group-hover:translate-x-1 transition-transform duration-300">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  ></path>
-                </svg>
-              </div>
-            </a>
+          <Link
+            href={href}
+            className="mt-6 inline-flex items-center justify-center px-5 py-2 rounded-full font-bold text-white bg-red-700 transition-all duration-300 md:bg-transparent md:text-red-700 md:group-hover:bg-red-700 md:group-hover:text-white md:border-2 md:border-red-700"
+          >
+            <span className="mr-2">Clique Para Saber Mais</span>
+            <div className="animate-shake md:animate-none md:group-hover:translate-x-1 transition-transform duration-300">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                ></path>
+              </svg>
+            </div>
           </Link>
         </div>
       </div>

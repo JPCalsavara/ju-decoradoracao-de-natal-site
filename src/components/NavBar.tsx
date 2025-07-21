@@ -1,7 +1,7 @@
 // src/components/NavBar.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -13,11 +13,6 @@ const NavBar = () => {
     ["Contato", "#contato"],
   ];
   const [open, setOpen] = useState(false);
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
 
   const iconName = open ? "close" : "menu";
   const iconPath = `/images/icons/${iconName}-svgrepo-com.svg`;
@@ -89,36 +84,35 @@ const NavBar = () => {
         </ul>
 
         {/* --- Menu Mobile --- */}
-        {hasMounted && (
-          <AnimatePresence>
-            {open && (
-              <motion.ul
-                className="lg:hidden absolute bg-white left-0 w-full pl-9 pb-12 pt-4 top-[84px] shadow-lg"
-                variants={menuVariants}
-                initial="closed"
-                animate="open"
-                exit="closed"
-              >
-                {navTopics.map(([label, href]) => (
-                  <motion.li
-                    key={href}
-                    className="my-7"
-                    variants={listItemVariants}
-                  >
-                    <Link href={href}>
-                      <a
-                        className="text-slate-700 hover:text-red-700 duration-300 text-xl"
-                        onClick={() => setOpen(false)}
-                      >
-                        {label}
-                      </a>
-                    </Link>
-                  </motion.li>
-                ))}
-              </motion.ul>
-            )}
-          </AnimatePresence>
-        )}
+
+        <AnimatePresence>
+          {open && (
+            <motion.ul
+              className="lg:hidden absolute bg-white left-0 w-full pl-9 pb-12 pt-4 top-[84px] shadow-lg"
+              variants={menuVariants}
+              initial="closed"
+              animate="open"
+              exit="closed"
+            >
+              {navTopics.map(([label, href]) => (
+                <motion.li
+                  key={href}
+                  className="my-7"
+                  variants={listItemVariants}
+                >
+                  <Link href={href}>
+                    <a
+                      className="text-slate-700 hover:text-red-700 duration-300 text-xl"
+                      onClick={() => setOpen(false)}
+                    >
+                      {label}
+                    </a>
+                  </Link>
+                </motion.li>
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
