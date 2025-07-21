@@ -18,7 +18,6 @@ const ArrowButton = ({
       e.stopPropagation();
       onClick(e);
     }}
-    // Cor do botão alterada para bg-red-600 e hover:bg-red-700
     className="absolute top-1/2 -translate-y-1/2 bg-red-600 text-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center hover:bg-red-700 transition-colors z-10"
     style={direction === "left" ? { left: "1rem" } : { right: "1rem" }}
     whileTap={{ scale: 0.9 }}
@@ -214,9 +213,9 @@ const ProdutoCard = ({
               </div>
 
               {/* --- ESTRUTURA DE LAYOUT CORRIGIDA --- */}
-              <div className="w-full lg:w-1/2 flex flex-col">
+              <div className="w-full lg:w-1/2 flex flex-col overflow-hidden">
                 {/* Área de conteúdo com rolagem */}
-                <div className="p-6 overflow-y-auto flex-grow">
+                <div className="p-6 overflow-y-auto flex-grow min-h-0">
                   <span className="inline-block bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider">
                     {tipo}
                   </span>
