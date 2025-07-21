@@ -17,12 +17,12 @@ export function GaleriaArvores() {
 
   // Cria a lista de prévia apenas com os 4 primeiros produtos carregados
   const arvoresPreview = useMemo(
-    () => produtos.filter((p) => p.tipo === "Árvore").slice(0, 4),
+    () => produtos.filter((p) => p.tipo === "Árvore").slice(0, 2),
     [produtos]
   );
 
   const guirlandasPreview = useMemo(
-    () => produtos.filter((p) => p.tipo === "Guirlanda").slice(0, 4),
+    () => produtos.filter((p) => p.tipo === "Guirlanda").slice(0, 2),
     [produtos]
   );
 
@@ -67,17 +67,7 @@ export function GaleriaArvores() {
         <>
           {/* Grid com a prévia dos Cards */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:pb-8">
-            {arvoresPreview.map((arvore) => (
-              <CardArvore
-                key={arvore.id}
-                produto={arvore}
-                onExpand={() => handleSelectTree(arvore)}
-              />
-            ))}
-          </div>
-
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {guirlandasPreview.map((arvore) => (
+            {[...arvoresPreview, ...guirlandasPreview].map((arvore) => (
               <CardArvore
                 key={arvore.id}
                 produto={arvore}
